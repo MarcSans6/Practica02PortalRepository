@@ -577,7 +577,7 @@ MonoBehaviour:
   m_Camera: {fileID: 1393425573739150174}
   m_OtherPortal: {fileID: 191876768858724466}
   m_MirrorPortal: {fileID: 0}
-  m_OffsetNearPlane: 0.1
+  m_OffsetNearPlane: 0.4
   m_ValidPoints:
   - {fileID: 8537766235146330782}
   - {fileID: 48141103014499986}

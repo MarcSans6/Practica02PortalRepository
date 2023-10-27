@@ -22,16 +22,24 @@ public class Portal: MonoBehaviour
 
     private void LateUpdate()
     {
+        UpdateMirrorPortalCamera();
+
+    }
+
+    private void UpdateMirrorPortalCamera()
+    {
+        //PlayerCamera world position to local position from otherPortal;
         Vector3 l_localPosition = m_OtherPortal.InverseTransformPoint(m_FPSController.Camera.transform.position);
+        //Applies l_localPosition to the MirrorPortal, then transforms that position into WorldSpace;
         Vector3 l_WorldPosition = m_MirrorPortal.transform.TransformPoint(l_localPosition);
         m_MirrorPortal.m_Camera.transform.position = l_WorldPosition;
+
         Vector3 l_localDirections = m_OtherPortal.InverseTransformDirection(m_FPSController.Camera.transform.forward);
         Vector3 l_WorldDirection = m_MirrorPortal.transform.TransformDirection(l_localDirections);
         m_MirrorPortal.m_Camera.transform.forward = l_WorldDirection;
 
         float l_Distance = Vector3.Distance(l_WorldPosition, m_MirrorPortal.transform.position) + m_OffsetNearPlane;
         m_MirrorPortal.m_Camera.nearClipPlane = l_Distance;
-
     }
 
     public bool IsValidPosition(Vector3 ShootPosition, Vector3 Position, Vector3 Normal,LayerMask _LayerMask )
