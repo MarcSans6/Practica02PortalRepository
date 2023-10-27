@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 3208022461326628895}
   - component: {fileID: 8241560895678845160}
   m_Layer: 0
-  m_Name: Frame+
+  m_Name: Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -353,3 +353,8 @@ MonoBehaviour:
   m_Camera: {fileID: 1393425573739150174}
   m_OtherPortal: {fileID: 191876768858724466}
   m_MirrorPortal: {fileID: 0}
+  m_OffsetNearPlane: 0.1
+  m_ValidPoints: []
+  m_MinDistanceToValidPoints: 0
+  m_ValidPointsOffset: 0.1
+  m_MinValidDotAngle: 0.95
