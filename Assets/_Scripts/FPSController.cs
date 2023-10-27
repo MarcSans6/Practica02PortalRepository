@@ -46,8 +46,9 @@ public class FPSController : MonoBehaviour
     //[SerializeField] KeyCode m_CrouchKeyCode = KeyCode.LeftControl;
     [Space]
     [SerializeField] Camera m_Camera;
+    public Camera Camera => m_Camera;
 
-    [Header("Animatiosn")]
+    [Header("Animations")]
     [SerializeField] Animation m_PitchCtrlAnimation;
     [SerializeField] AnimationClip m_CameraShakeAnim;
     [SerializeField] Animator m_PlayerCameraAnimator;
@@ -60,17 +61,11 @@ public class FPSController : MonoBehaviour
 
     CharacterController m_CharacterController;
 
-    
-    
     private void Awake()
     {
         m_CharacterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-    }
-
-    private void Start()
-    {
     }
     void Update()
     {
@@ -84,6 +79,7 @@ public class FPSController : MonoBehaviour
         {
             //m_PitchCtrlAnimation.Play();
         }
+        //else
             //m_PitchCtrlAnimation.Stop();
     }
 
@@ -116,8 +112,6 @@ public class FPSController : MonoBehaviour
 
         float l_YawInverted = m_YawInverted ? -1.0f : 1.0f;
         float l_PitchInverted = m_PitchInverted ? -1 : 1;
-
-    
 
         m_Yaw += m_YawSpeed * l_HorizontalMovement * Time.deltaTime * l_YawInverted;
         m_Pitch += m_PitchSpeed * l_VerticalMovement * Time.deltaTime * l_PitchInverted;

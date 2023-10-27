@@ -3,35 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameController : MonoBehaviour
 {
-    static GameManager m_GameManager;
+    static GameController m_GameController;
     public GameObject m_DestroyObjects;
     public Vector3 m_PlayerSpawnPosition;
     public Quaternion m_PlayerSpawnRotation;
     public PlayerController m_Player;
 
-    readonly string m_Level2SceneName = "Level2Scene";
-
     bool m_GameOver = false;
-
 
     private void Start()
     {
     }
-    public static GameManager GetGameManager()
+    public static GameController GetGameController()
     {
-        if (m_GameManager == null)
+        if (m_GameController == null)
         {
-            GameObject l_gameObject = new GameObject("GameManager");
-            m_GameManager = l_gameObject.AddComponent<GameManager>();
+            GameObject l_gameObject = new GameObject("GameController");
+            m_GameController = l_gameObject.AddComponent<GameController>();
             DontDestroyOnLoad(l_gameObject);
 
-            m_GameManager.m_DestroyObjects = new GameObject("DestroyObjects");
-            m_GameManager.m_DestroyObjects.transform.SetParent(m_GameManager.transform);
+            m_GameController.m_DestroyObjects = new GameObject("DestroyObjects");
+            m_GameController.m_DestroyObjects.transform.SetParent(m_GameController.transform);
 
         }
-        return m_GameManager;
+        return m_GameController;
     }
 
     private void DestroyObjects()
@@ -47,23 +44,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-//#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.N))
-            EnterNextLevel();
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.L))
-//#endif
+            RestartLevel();
+#endif
         if (m_GameOver && Input.GetKeyDown(KeyCode.Return))
-        {
-        }
-    }
-
-    public void EnterNextLevel()
-    {
-    }
-
-    private void LoadLevel2Scene()
-    {
-        SceneManager.LoadScene(m_Level2SceneName);
+            RestartLevel();
     }
 
     public void OnGameOver()
@@ -71,8 +57,10 @@ public class GameManager : MonoBehaviour
         m_GameOver = true;
     }
     
-    
-
     #region RestartLevel
-    }
+    public void RestartLevel()
+    {
+        DestroyObjects();
+    }   
     #endregion
+}

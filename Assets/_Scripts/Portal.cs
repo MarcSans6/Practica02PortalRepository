@@ -4,7 +4,7 @@ using UnityEngine;
 public class Portal: MonoBehaviour
 {
     public Camera m_Camera;
-    PlayerController m_playerController;
+    FPSController m_FPSController;
     public Transform m_OtherPortal;
     public Portal m_MirrorPortal;
     public float m_OffsetNearPlane = 0.1f;
@@ -17,15 +17,15 @@ public class Portal: MonoBehaviour
 
     private void Start()
     {
-        m_playerController = GameManager.GetGameManager().m_Player;
+        m_FPSController = GameController.GetGameController().m_Player.GetComponent<FPSController>();
     }
 
     private void LateUpdate()
     {
-        Vector3 l_localPosition = m_OtherPortal.InverseTransformPoint(m_playerController.m_Camera.transform.position);
+        Vector3 l_localPosition = m_OtherPortal.InverseTransformPoint(m_FPSController.Camera.transform.position);
         Vector3 l_WorldPosition = m_MirrorPortal.transform.TransformPoint(l_localPosition);
         m_MirrorPortal.m_Camera.transform.position = l_WorldPosition;
-        Vector3 l_localDirections = m_OtherPortal.InverseTransformDirection(m_playerController.m_Camera.transform.forward);
+        Vector3 l_localDirections = m_OtherPortal.InverseTransformDirection(m_FPSController.Camera.transform.forward);
         Vector3 l_WorldDirection = m_MirrorPortal.transform.TransformDirection(l_localDirections);
         m_MirrorPortal.m_Camera.transform.forward = l_WorldDirection;
 
@@ -50,21 +50,21 @@ public class Portal: MonoBehaviour
             {
                 if (l_RayCastHit.collider.tag == "Drawable")
                 {
-                    float l_DistanceToHIt = Vector3.Distance(m_ValidPoints[i].position, l_RayCastHit.point);
-                    if (l_DistanceToHIt >= m_MinDistanceToValidPoints && l_DistanceToHIt <= m_MaxDistanceToValidPoints)
+                    float l_DistanceToHit = Vector3.Distance(m_ValidPoints[i].position, l_RayCastHit.point);
+                    if (l_DistanceToHit >= m_MinDistanceToValidPoints && l_DistanceToHit <= m_MaxDistanceToValidPoints)
                     {
                         float l_DotAngle = Vector3.Dot(Normal, l_RayCastHit.normal);
                         if (l_DotAngle < m_MinValidDotAngle)
                         {
                             l_IsValid = false;
                         }
+                        //IF HERE, IsValid is true
                     }
                     else 
                         l_IsValid = false;
                 }
                 else 
                     l_IsValid = false;
-
             }
             else 
                 l_IsValid = false;
