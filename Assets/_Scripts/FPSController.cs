@@ -23,9 +23,7 @@ public class FPSController : MonoBehaviour
     float m_Pitch;
 
     [Header("Shoot")]
-    [SerializeField] bool m_AutoReload;
-    public bool AutoReload => m_AutoReload;
-
+    public PortalGun m_PortalGun;
 
     [Header("Movement")]
     [SerializeField] float m_WalkingSpeed;
@@ -35,6 +33,8 @@ public class FPSController : MonoBehaviour
     [SerializeField] float m_CoyoteTime;
     float m_LastTimeOnGround;
     float m_VerticalSpeed;
+    public Vector3 MovementDirection => m_MovementDirection;
+    Vector3 m_MovementDirection;
 
     [Header("Input")]
     [SerializeField] KeyCode m_UpKeyCode = KeyCode.W;
@@ -121,6 +121,11 @@ public class FPSController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0.0f, m_Yaw, 0.0f);
         m_PitchController.localRotation = Quaternion.Euler(m_Pitch, 0.0f, 0.0f);
     }
+    public void SetYaw(float _Yaw)
+    {
+        m_Yaw = _Yaw;
+    }
+
     #endregion
 
     #region "Shoot Code"
@@ -133,6 +138,8 @@ public class FPSController : MonoBehaviour
 
         HandleWalk(ref l_Movement);
         HandleJump(ref l_Movement);
+
+        m_MovementDirection = l_Movement.normalized;
 
         CollisionFlags l_CollisionFlags = m_CharacterController.Move(l_Movement);
         HandleCollisions(l_CollisionFlags);

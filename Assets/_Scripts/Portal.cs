@@ -20,10 +20,21 @@ public class Portal: MonoBehaviour
         m_FPSController = GameController.GetGameController().m_Player.GetComponent<FPSController>();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        Teleportable l_Teleportable = other.GetComponent<Teleportable>();
+        if (l_Teleportable != null)
+        {
+            if (l_Teleportable.CanTeleport(this))
+            {
+                l_Teleportable.Teleport(this);
+            }
+        }
+    }
+
     private void LateUpdate()
     {
         UpdateMirrorPortalCamera();
-
     }
 
     private void UpdateMirrorPortalCamera()
