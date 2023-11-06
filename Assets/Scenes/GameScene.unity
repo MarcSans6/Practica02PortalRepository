@@ -169,15 +169,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RayCastCamera: {fileID: 963194227}
-  m_BluePortal: {fileID: 0}
-  m_OrangePortal: {fileID: 0}
+  m_BluePortal: {fileID: 121173716}
+  m_OrangePortal: {fileID: 1977280751}
+  m_MaxDistanceToShoot: 10000
+  m_ShootableSurface:
+    serializedVersion: 2
+    m_Bits: 832
   m_AttachingPosition: {fileID: 2094047949}
   m_AttachingSpeed: 15
   m_AttachObjectLayerMask:
     serializedVersion: 2
     m_Bits: 256
   m_MaxDistanceToAttach: 10
-  m_ShootAttachedObjectForce: 10
+  m_ShootAttachedObjectForce: 20
   m_ShootObjectKeyCode: 323
   m_AttachObjectKeyCode: 101
   m_ShootBluePortalKeyCode: 323
@@ -211,7 +215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_DotTraversePortal: 0.42
-  m_PortalOffset: 0.8
+  m_PortalOffset: 5
 --- !u!1 &582658323
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,7 +689,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 311
+    m_Bits: 887
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -938,6 +942,10 @@ PrefabInstance:
       propertyPath: m_MirrorPortal
       value: 
       objectReference: {fileID: 121173716}
+    - target: {fileID: 18520412376145355, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
+      propertyPath: m_MinDistanceToValidPoints
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1393425573739150174, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_TargetTexture
       value: 
@@ -952,7 +960,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4270359022164177000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.12
+      value: 12.11
       objectReference: {fileID: 0}
     - target: {fileID: 4270359022164177000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -960,7 +968,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4270359022164177000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.4099994
+      value: -0.83
       objectReference: {fileID: 0}
     - target: {fileID: 4270359022164177000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1009,6 +1017,10 @@ PrefabInstance:
     - target: {fileID: 9029759822332269224, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_Name
       value: OrangePortal
+      objectReference: {fileID: 0}
+    - target: {fileID: 9029759822332269224, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
@@ -1147,6 +1159,10 @@ PrefabInstance:
     - target: {fileID: 2796915956342439184, guid: a00bd62f92177fd429ac413f1627cd5b, type: 3}
       propertyPath: m_Name
       value: NonDrawable
+      objectReference: {fileID: 0}
+    - target: {fileID: 2796915956342439184, guid: a00bd62f92177fd429ac413f1627cd5b, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2796915956342726960, guid: a00bd62f92177fd429ac413f1627cd5b, type: 3}
       propertyPath: m_RootOrder
@@ -1442,6 +1458,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DrawableWall
       objectReference: {fileID: 0}
+    - target: {fileID: 6192263345620778248, guid: a9cc1d8e73c6ef64b93b43a864f79ee5, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a9cc1d8e73c6ef64b93b43a864f79ee5, type: 3}
 --- !u!1001 &7808569646852850207
@@ -1455,6 +1475,10 @@ PrefabInstance:
       propertyPath: m_MirrorPortal
       value: 
       objectReference: {fileID: 1977280751}
+    - target: {fileID: 18520412376145355, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
+      propertyPath: m_MinDistanceToValidPoints
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1393425573739150174, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_TargetTexture
       value: 
@@ -1465,7 +1489,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4270359022164177000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.9200001
+      value: 13.58
       objectReference: {fileID: 0}
     - target: {fileID: 4270359022164177000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1530,6 +1554,10 @@ PrefabInstance:
     - target: {fileID: 9029759822332269224, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_Name
       value: BluePortal
+      objectReference: {fileID: 0}
+    - target: {fileID: 9029759822332269224, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}

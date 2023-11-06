@@ -55,6 +55,7 @@ public class Portal: MonoBehaviour
 
     public bool IsValidPosition(Vector3 ShootPosition, Vector3 Position, Vector3 Normal,LayerMask _LayerMask )
     {
+        Vector3 l_StartPosition = transform.position;
         transform.position = Position;
         transform.rotation=Quaternion.LookRotation(Normal);
         bool l_IsValid = true;
@@ -78,6 +79,7 @@ public class Portal: MonoBehaviour
                             l_IsValid = false;
                         }
                         //IF HERE, IsValid is true
+                        Debug.Log("VALID POSITION " + this.gameObject.name);
                     }
                     else 
                         l_IsValid = false;
@@ -88,6 +90,12 @@ public class Portal: MonoBehaviour
             else 
                 l_IsValid = false;
         }
+
+        if (!l_IsValid)
+        {
+            //transform.position = l_StartPosition;
+        }
+
         return l_IsValid;
     }
 }

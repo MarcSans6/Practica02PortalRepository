@@ -11,6 +11,7 @@ public abstract class Teleportable: MonoBehaviour
     public float m_PortalOffset = 0.8f;
     protected Vector3 m_Forward;
 
+
     public virtual bool CanTeleport(Portal _Portal)
     {
         float l_DotAngle = Vector3.Dot(_Portal.m_OtherPortal.forward, m_Forward);
@@ -24,6 +25,7 @@ public abstract class Teleportable: MonoBehaviour
         Vector3 l_LocalMovement = _Portal.m_OtherPortal.InverseTransformDirection(m_Forward);
         Vector3 l_WorldMovement = _Portal.m_MirrorPortal.transform.TransformDirection(l_LocalMovement);
         transform.position = l_WorldPosition + l_WorldMovement * m_PortalOffset;
+        Debug.Break();
     }
 }
 

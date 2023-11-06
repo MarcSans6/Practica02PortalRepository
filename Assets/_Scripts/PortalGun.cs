@@ -9,6 +9,8 @@ public class PortalGun: MonoBehaviour
     [Header("Shoot Portals")]
     public Portal m_BluePortal;
     public Portal m_OrangePortal;
+    public float m_MaxDistanceToShoot;
+    public LayerMask m_ShootableSurface;
 
     [Header("Attach Objects")]
     public Transform m_AttachingPosition;
@@ -35,7 +37,31 @@ public class PortalGun: MonoBehaviour
 
     private void HandleShootPortals()
     {
+        if (Input.GetKeyDown(m_ShootOrangePortalKeyCode))
+        {
+            TryShootPortal(m_OrangePortal);
+            Debug.Log("Click Orange");
 
+        }
+        else if (Input.GetKeyDown(m_ShootBluePortalKeyCode))
+        {
+            Debug.Log("Click Blue");
+            TryShootPortal(m_BluePortal);
+        }
+    }
+
+    private void TryShootPortal(Portal _Portal)
+    {
+        Ray l_ray = m_RayCastCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit l_hit;
+
+        if (Physics.Raycast(l_ray, out l_hit, m_MaxDistanceToShoot, m_ShootableSurface.value))
+        {
+            if (_Portal.IsValidPosition(m_RayCastCamera.transform.position, l_hit.point, l_hit.normal, m_ShootableSurface.value))
+            {
+                _Portal.gameObject.SetActive(true);
+            }
+        }
     }
 
     private void HandleAttachObjects()
