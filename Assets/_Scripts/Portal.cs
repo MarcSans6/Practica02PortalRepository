@@ -28,7 +28,7 @@ public class Portal: MonoBehaviour
         Teleportable l_Teleportable = other.GetComponent<Teleportable>();
         if (l_Teleportable != null)
         {
-            Debug.Log("Teleportable in range");
+            Debug.Log("Teleportable in range"); 
             if (l_Teleportable.CanTeleport(this))
             {
                 l_Teleportable.Teleport(this);
