@@ -3,15 +3,18 @@ using UnityEngine;
 
 public class Portal: MonoBehaviour
 {
+    [Header("References")]
     public Camera m_Camera;
     FPSController m_FPSController;
     public Transform m_OtherPortal;
     public Portal m_MirrorPortal;
-    public float m_OffsetNearPlane = 0.1f;
 
+    [Space]
+    public float m_OffsetNearPlane = 0.1f;
     public List<Transform> m_ValidPoints;
+    public float m_MinDistanceToMirrorPortal = 0.5f;
     public float m_MinDistanceToValidPoints;
-    private float m_MaxDistanceToValidPoints;
+    public float m_MaxDistanceToValidPoints;
     public float m_ValidPointsOffset = 0.1f;
     public float m_MinValidDotAngle = 0.95f;
 
@@ -25,6 +28,7 @@ public class Portal: MonoBehaviour
         Teleportable l_Teleportable = other.GetComponent<Teleportable>();
         if (l_Teleportable != null)
         {
+            Debug.Log("Teleportable in range");
             if (l_Teleportable.CanTeleport(this))
             {
                 l_Teleportable.Teleport(this);
@@ -55,10 +59,19 @@ public class Portal: MonoBehaviour
 
     public bool IsValidPosition(Vector3 ShootPosition, Vector3 Position, Vector3 Normal,LayerMask _LayerMask )
     {
+        gameObject.SetActive(false);
         Vector3 l_StartPosition = transform.position;
+        Quaternion l_StartRotation = transform.rotation;
         transform.position = Position;
         transform.rotation=Quaternion.LookRotation(Normal);
         bool l_IsValid = true;
+
+        if (m_MirrorPortal.isActiveAndEnabled)
+        {
+            float l_DistanceToMirrorPortal = Vector3.Distance(transform.position, m_MirrorPortal.transform.position);
+            l_IsValid = l_DistanceToMirrorPortal >= m_MinDistanceToMirrorPortal;
+        }
+
         for (int i = 0; i < m_ValidPoints.Count; i++)
         {
             Vector3 l_Direction = m_ValidPoints[i].position - ShootPosition;
@@ -68,6 +81,7 @@ public class Portal: MonoBehaviour
             RaycastHit l_RayCastHit;
             if(Physics.Raycast(l_Ray, out l_RayCastHit, l_Distance + m_ValidPointsOffset, _LayerMask.value))
             {
+
                 if (l_RayCastHit.collider.tag == "Drawable")
                 {
                     float l_DistanceToHit = Vector3.Distance(m_ValidPoints[i].position, l_RayCastHit.point);
@@ -78,8 +92,6 @@ public class Portal: MonoBehaviour
                         {
                             l_IsValid = false;
                         }
-                        //IF HERE, IsValid is true
-                        Debug.Log("VALID POSITION " + this.gameObject.name);
                     }
                     else 
                         l_IsValid = false;
@@ -93,7 +105,9 @@ public class Portal: MonoBehaviour
 
         if (!l_IsValid)
         {
-            //transform.position = l_StartPosition;
+            transform.position = l_StartPosition;
+            transform.rotation = l_StartRotation;
+            gameObject.SetActive(true);
         }
 
         return l_IsValid;

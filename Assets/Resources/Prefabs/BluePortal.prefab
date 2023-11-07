@@ -571,7 +571,9 @@ MonoBehaviour:
   - {fileID: 2122080279412079835}
   - {fileID: 2983407414219702182}
   - {fileID: 2814221288363780613}
+  m_MinDistanceToMirrorPortal: 0.5
   m_MinDistanceToValidPoints: 0
+  m_MaxDistanceToValidPoints: 3
   m_ValidPointsOffset: 0.1
   m_MinValidDotAngle: 0.95
 --- !u!65 &7188211964590309079
@@ -585,5 +587,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 0.4}
+  m_Size: {x: 1, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
