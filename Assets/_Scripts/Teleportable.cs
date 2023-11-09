@@ -11,11 +11,14 @@ public abstract class Teleportable: MonoBehaviour
     public float m_DotTraversePortal = 0.42f;
     public float m_PortalOffset = 0.8f;
     protected Vector3 m_Forward;
+    private Vector3 m_RotatedForward;
 
 
     public virtual bool CanTeleport(Portal _Portal)
     {
-        float l_DotAngle = Vector3.Dot(_Portal.m_OtherPortal.forward, m_Forward);
+        m_RotatedForward = new(m_Forward.x, -Mathf.Tan(_Portal.m_OtherPortal.rotation.eulerAngles.y), m_Forward.z);
+        Debug.Log("Can teleport");
+        float l_DotAngle = Vector3.Dot(_Portal.m_OtherPortal.forward, m_RotatedForward);
         return l_DotAngle > m_DotTraversePortal && _Portal.m_MirrorPortal.isActiveAndEnabled;
     }
 
