@@ -122,8 +122,13 @@ public class Portal: MonoBehaviour
         l_ShootDir.Normalize();
         Quaternion l_DirQuaternion = Quaternion.LookRotation(l_ShootDir);
         transform.rotation = Quaternion.LookRotation(_Normal);
-        if (_Normal == Vector3.up || _Normal == Vector3.down)
+        if (IsHorizontal())
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, l_DirQuaternion.eulerAngles.y);
+    }
+
+    public bool IsHorizontal()
+    {
+        return transform.forward == Vector3.up ||transform.forward == Vector3.down;
     }
 
     public void SetColliderPlaced(Collider _Collider)

@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Linq.Expressions;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 public class FPSController : MonoBehaviour
@@ -8,6 +10,8 @@ public class FPSController : MonoBehaviour
     public bool Moving { get; private set; }
     public bool Sprinting { get; private set; }
     public bool Jumping { get; private set; }
+
+    Rigidbody m_Rigidbody;
 
     [Header("Aim")]
     [SerializeField] float m_YawSpeed;
@@ -26,10 +30,11 @@ public class FPSController : MonoBehaviour
     public PortalGun m_PortalGun;
 
     [Header("Movement")]
+    public LayerMask m_GroundLayer;
     [SerializeField] float m_WalkingSpeed;
     [SerializeField] float m_SprintSpeed;
     [SerializeField] float m_CrouchingSpeed;
-    [SerializeField] float m_JumpSpeed;
+    [SerializeField] float m_JumpForce;
     [SerializeField] float m_CoyoteTime;
     float m_LastTimeOnGround;
     float m_VerticalSpeed;
@@ -63,17 +68,18 @@ public class FPSController : MonoBehaviour
 
     private void Awake()
     {
-        m_CharacterController = GetComponent<CharacterController>();
+        m_Rigidbody = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    void Update()
+    void FixedUpdate()
     {
 #if UNITY_EDITOR
         FreezMouseDebug();
 #endif
         HandleAim();
         HandleMovement();
+        HandleJump();
 
         if (Moving)
         {
@@ -134,76 +140,74 @@ public class FPSController : MonoBehaviour
     #region "Movement Code"
     private void HandleMovement()
     {
-        Vector3 l_Movement = Vector3.zero;
-
-        HandleWalk(ref l_Movement);
-        HandleJump(ref l_Movement);
-
-        m_MovementDirection = l_Movement.normalized;
-
-        CollisionFlags l_CollisionFlags = m_CharacterController.Move(l_Movement);
-        HandleCollisions(l_CollisionFlags);
-    }
-
-    private void HandleCollisions(CollisionFlags collisionFlags)
-    {
-        if ((collisionFlags & CollisionFlags.CollidedBelow) != 0)
-        {
-            m_VerticalSpeed = 0.0f;
-            Jumping = false;
-        }
-        if ((collisionFlags & CollisionFlags.CollidedAbove) != 0 && m_VerticalSpeed > 0.0f)
-            m_VerticalSpeed = 0.0f;
-
-    }
-
-    private void HandleJump(ref Vector3 movement)
-    {
-        if (CanJump())
-        {
-            m_VerticalSpeed = m_JumpSpeed;
-            Jumping = true;
-        }
-
-        m_VerticalSpeed += Physics.gravity.y * Time.deltaTime;
-        movement.y = m_VerticalSpeed * Time.deltaTime;
-    }
-    private bool CanJump()
-    {
-        if (m_VerticalSpeed == 0) m_LastTimeOnGround = Time.time;
-
-        bool l_InCoyoteTime = Time.time - m_LastTimeOnGround <= m_CoyoteTime;
-        return Input.GetKeyDown(m_JumpKeyCode) && l_InCoyoteTime;
-    }
-    private void HandleWalk(ref Vector3 movement)
-    {
+        Vector3 l_HorizontalDirection = GetHorizontalDirection();
         float l_Speed = m_WalkingSpeed;
-
         if (CanSprint())
             l_Speed = m_SprintSpeed;
-
-
+        Vector3 l_Velocity = l_Speed * l_HorizontalDirection;
+        Debug.Log(l_Velocity.magnitude);
+        m_Rigidbody.velocity = new Vector3(l_Velocity.x, m_Rigidbody.velocity.y, l_Velocity.z);
+    }
+    private Vector3 GetHorizontalDirection()
+    {
         float l_YawInRadians = m_Yaw * Mathf.Deg2Rad;
         float l_Yaw90InRadians = (m_Yaw + 90.0f) * Mathf.Deg2Rad;
 
         Vector3 l_Forward = new(Mathf.Sin(l_YawInRadians), 0.0f, Mathf.Cos(l_YawInRadians));
         Vector3 l_Right = new(Mathf.Sin(l_Yaw90InRadians), 0.0f, Mathf.Cos(l_Yaw90InRadians));
 
+        Vector3 l_Direction = Vector3.zero;
+
         if (Input.GetKey(m_LeftKeyCode))
-            movement -= l_Right;
+            l_Direction -= l_Right;
         if (Input.GetKey(m_RightKeyCode))
-            movement += l_Right;
+            l_Direction += l_Right;
 
         if (Input.GetKey(m_DownKeyCode))
-            movement -= l_Forward;
+            l_Direction -= l_Forward;
         if (Input.GetKey(m_UpKeyCode))
-            movement += l_Forward;
+            l_Direction += l_Forward;
 
-        Moving = movement != Vector3.zero;
-        Sprinting = l_Speed == m_SprintSpeed && Moving;
-        movement.Normalize();
-        movement *= l_Speed * Time.deltaTime;
+        l_Direction.y = 0;
+        l_Direction.Normalize();
+        return l_Direction;
     }
+
+    private void HandleJump()
+    {
+        Debug.Log("HandleJump");
+        if (CanJump())
+        {
+            Vector3 l_Force = Vector3.up * m_JumpForce;
+            m_Rigidbody.AddForce(l_Force);
+            Debug.Log("Jumped");
+        }
+    }
+    private bool CanJump()
+    {
+        Debug.Log("CanJump");
+        if (OnGround()) m_LastTimeOnGround = Time.time;
+
+        bool l_InCoyoteTime = Time.time - m_LastTimeOnGround <= m_CoyoteTime;
+        return Input.GetKeyDown(m_JumpKeyCode) && l_InCoyoteTime;
+    }
+
+    private bool OnGround()
+    {
+        Ray l_Ray = new Ray(transform.position, Vector3.down);
+        float l_Distance = 0.001f;
+        if (Physics.Raycast(l_Ray, l_Distance, m_GroundLayer.value))
+        {
+            Debug.Log("OnGround");
+            var temp = m_Rigidbody.velocity;
+            temp.y = 0;
+            m_Rigidbody.velocity = temp;
+            return true;
+        }
+        return false;
+        
+    }
+
     private bool CanSprint()
     {
         return Input.GetKey(m_SprintKeyCode);
@@ -214,24 +218,6 @@ public class FPSController : MonoBehaviour
     #region "ICollector"
 
     #endregion
-    public void AddTorque(Vector2 torque, float time)
-    {
-        StartCoroutine(AddTorqueOverTime(torque, time));
-    }
-
-    private IEnumerator AddTorqueOverTime(Vector2 torque, float time)
-    {
-        float l_timer = time;
-
-        while (l_timer > 0)
-        {
-            m_Pitch += torque.y * Time.deltaTime;
-            m_Yaw += torque.x * Time.deltaTime;
-            l_timer -= Time.deltaTime;
-            yield return null;
-        }
-    }
-
     void DeactivatePlayer()
     {
         this.enabled = false;

@@ -265,6 +265,7 @@ GameObject:
   - component: {fileID: 3892218346873440586}
   - component: {fileID: 3892218346873440585}
   - component: {fileID: 3892218346873440584}
+  - component: {fileID: 7152697378708168439}
   m_Layer: 0
   m_Name: CompanionCube
   m_TagString: Untagged
@@ -317,6 +318,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7152697378708168439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3892218346873440587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ce5d252cd1a8c34b88522dff7f92f6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_DotTraversePortal: 0.42
+  m_PortalOffset: 0.8
 --- !u!1 &3892509327073003928
 GameObject:
   m_ObjectHideFlags: 0
