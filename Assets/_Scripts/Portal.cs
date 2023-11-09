@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Portal: MonoBehaviour
@@ -57,13 +58,12 @@ public class Portal: MonoBehaviour
         m_MirrorPortal.m_Camera.nearClipPlane = l_Distance;
     }
 
-    public bool IsValidPosition(Vector3 ShootPosition, Vector3 Position, Vector3 Normal,LayerMask _LayerMask )
+    public bool IsValidPosition(Vector3 ShootPosition, Vector3 Position, Vector3 Normal, LayerMask _LayerMask)
     {
-        gameObject.SetActive(false);
         Vector3 l_StartPosition = transform.position;
         Quaternion l_StartRotation = transform.rotation;
-        transform.position = Position;
-        transform.rotation=Quaternion.LookRotation(Normal);
+        PlacePortal(Position, Normal, ShootPosition);
+        gameObject.SetActive(false);
         bool l_IsValid = true;
 
         if (m_MirrorPortal.isActiveAndEnabled)
@@ -79,7 +79,7 @@ public class Portal: MonoBehaviour
             l_Direction.Normalize();
             Ray l_Ray = new Ray(ShootPosition, l_Direction);
             RaycastHit l_RayCastHit;
-            if(Physics.Raycast(l_Ray, out l_RayCastHit, l_Distance + m_ValidPointsOffset, _LayerMask.value))
+            if (Physics.Raycast(l_Ray, out l_RayCastHit, l_Distance + m_ValidPointsOffset, _LayerMask.value))
             {
 
                 if (l_RayCastHit.collider.tag == "Drawable")
@@ -93,13 +93,13 @@ public class Portal: MonoBehaviour
                             l_IsValid = false;
                         }
                     }
-                    else 
+                    else
                         l_IsValid = false;
                 }
-                else 
+                else
                     l_IsValid = false;
             }
-            else 
+            else
                 l_IsValid = false;
         }
 
@@ -112,4 +112,17 @@ public class Portal: MonoBehaviour
 
         return l_IsValid;
     }
+
+    private void PlacePortal(Vector3 _Position, Vector3 _Normal, Vector3 _ShootPosition)
+    {
+        transform.position = _Position;
+        Vector3 l_ShootDir = _Position - _ShootPosition;
+        l_ShootDir.Normalize();
+        Quaternion l_DirQuaternion = Quaternion.LookRotation(l_ShootDir);
+        transform.rotation = Quaternion.LookRotation(_Normal);
+        if (_Normal == Vector3.up || _Normal == Vector3.down)
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, l_DirQuaternion.eulerAngles.y);
+    }
+
+    
 }
