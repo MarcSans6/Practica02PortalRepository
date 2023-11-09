@@ -52,14 +52,15 @@ public class PortalGun: MonoBehaviour
 
     private void TryShootPortal(Portal _Portal)
     {
-        Ray l_ray = m_RayCastCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit l_hit;
+        Ray l_Ray = m_RayCastCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit l_RaycastHit;
 
-        if (Physics.Raycast(l_ray, out l_hit, m_MaxDistanceToShoot, m_ShootableSurface.value))
+        if (Physics.Raycast(l_Ray, out l_RaycastHit, m_MaxDistanceToShoot, m_ShootableSurface.value))
         {
-            if (_Portal.IsValidPosition(m_RayCastCamera.transform.position, l_hit.point, l_hit.normal, m_ShootableSurface.value))
+            if (_Portal.IsValidPosition(m_RayCastCamera.transform.position, l_RaycastHit.point, l_RaycastHit.normal, m_ShootableSurface.value))
             {
                 _Portal.gameObject.SetActive(true);
+                _Portal.SetColliderPlaced(l_RaycastHit.collider);
             }
         }
     }

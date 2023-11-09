@@ -19,6 +19,8 @@ public class Portal: MonoBehaviour
     public float m_ValidPointsOffset = 0.1f;
     public float m_MinValidDotAngle = 0.95f;
 
+    private Collider m_ColliderPlaced;
+
     private void Start()
     {
         m_FPSController = GameController.GetGameController().m_Player.GetComponent<FPSController>();
@@ -124,5 +126,9 @@ public class Portal: MonoBehaviour
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, l_DirQuaternion.eulerAngles.y);
     }
 
-    
+    public void SetColliderPlaced(Collider _Collider)
+    {
+        m_ColliderPlaced = _Collider;
+        Debug.Log(_Collider.gameObject.name);
+    }
 }
