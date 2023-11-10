@@ -21,7 +21,7 @@ public class Teleportable: MonoBehaviour
 
     public virtual bool CanTeleport(Portal _Portal)
     {
-        if (_Portal.IsHorizontal())
+        if (_Portal.IsInHorizontalRotation())
         {
             return _Portal.m_MirrorPortal.isActiveAndEnabled;
         }

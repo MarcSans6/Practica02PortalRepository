@@ -22,16 +22,22 @@ public class Portal : MonoBehaviour
     public float m_ValidPointsOffset = 0.1f;
     public float m_MinValidDotAngle = 0.95f;
 
-    public Collider m_WallCollider;
+    public Collider WallCollider => m_WallCollider;
+    private Collider m_WallCollider;
     private List<PortableObject> m_PortableObjects = new();
     private List<PortableObject> m_BannedObjects = new();
+    private Collider m_Collider;
 
+    public static Action<Portal> OnPlaced;
 
     public bool IsPlaced => m_IsPlaced;
+
+
     bool m_IsPlaced;
     private void Awake()
     {
         m_IsPlaced = true;
+        m_Collider = GetComponent<Collider>();
     }
     private void Start()
     {
@@ -44,19 +50,12 @@ public class Portal : MonoBehaviour
         if (l_Obj != null)
         {
             Debug.Log("Portal Enter Triggered " + gameObject.name);
-            if (l_Obj.IsMovingTowardsPortal(this))
+            if (l_Obj.CanWarp(this))
             {
                 m_PortableObjects.Add(l_Obj);
                 l_Obj.SetIsInPortal(this, m_MirrorPortal, m_WallCollider);
-                //Debug.Break();
             }
         }
-    }
-
-    private bool IsHorizontalPosition()
-    {
-        float l_Dot = Vector3.Dot(transform.forward, Vector3.forward);
-        return l_Dot < 0.001;
     }
 
     private void OnTriggerExit(Collider other)
@@ -64,14 +63,14 @@ public class Portal : MonoBehaviour
         var l_Obj = other.GetComponent<PortableObject>();
         if (m_PortableObjects.Contains(l_Obj))
         {
-            Debug.Log("Portal Exit Triggered");
+            Debug.Log("Portal Exit Triggered " + this.gameObject.name);
             m_PortableObjects.Remove(l_Obj);
             l_Obj.ExitPortal(m_WallCollider);
         }
     }
 
 
-    private void Update()
+    private void LateUpdate()
     {
         m_Renderer.enabled = m_MirrorPortal.IsPlaced;
 
@@ -80,15 +79,19 @@ public class Portal : MonoBehaviour
             var l_Obj = m_PortableObjects[i];
             Vector3 l_ObjPos = transform.InverseTransformPoint(l_Obj.CenterPos);
             
-            if (l_ObjPos.z < 0.0f)
+            if (l_ObjPos.z < 0.0f) // The object went throught the portal
             {
-                l_Obj.Warp();
+                Vector3 l_ColliderSize = m_Collider.bounds.size;
+                if (l_ObjPos.x < l_ColliderSize.x/2 && l_ObjPos.z < l_ColliderSize.z/2) // The object is inside the collider in
+                {                                                                       // the horizontal axis
+                    l_Obj.Warp();
+                }
+                else
+                {
+                    m_PortableObjects.Remove(l_Obj);
+                }
             }
         }
-    }
-
-    private void LateUpdate()
-    {
         UpdateMirrorPortalCamera();
     }
 
@@ -174,7 +177,7 @@ public class Portal : MonoBehaviour
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, l_DirQuaternion.eulerAngles.y);
     }
 
-    public bool IsHorizontal()
+    public bool IsInHorizontalRotation()
     {
         return transform.forward == Vector3.up ||transform.forward == Vector3.down;
     }
@@ -189,6 +192,7 @@ public class Portal : MonoBehaviour
     {
         m_IsPlaced = v;
         gameObject.SetActive(v);
+        OnPlaced?.Invoke(this);
     }
 
     public void AddBanned(PortableObject portableObject)
