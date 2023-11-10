@@ -40,12 +40,10 @@ public class PortalGun: MonoBehaviour
         if (Input.GetKeyDown(m_ShootOrangePortalKeyCode))
         {
             TryShootPortal(m_OrangePortal);
-            Debug.Log("Click Orange");
 
         }
         else if (Input.GetKeyDown(m_ShootBluePortalKeyCode))
         {
-            Debug.Log("Click Blue");
             TryShootPortal(m_BluePortal);
         }
     }
