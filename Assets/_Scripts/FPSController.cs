@@ -145,7 +145,6 @@ public class FPSController : MonoBehaviour
         if (CanSprint())
             l_Speed = m_SprintSpeed;
         Vector3 l_Velocity = l_Speed * l_HorizontalDirection;
-        Debug.Log(l_Velocity.magnitude);
         m_Rigidbody.velocity = new Vector3(l_Velocity.x, m_Rigidbody.velocity.y, l_Velocity.z);
     }
     private Vector3 GetHorizontalDirection()
@@ -175,17 +174,14 @@ public class FPSController : MonoBehaviour
 
     private void HandleJump()
     {
-        Debug.Log("HandleJump");
         if (CanJump())
         {
             Vector3 l_Force = Vector3.up * m_JumpForce;
             m_Rigidbody.AddForce(l_Force);
-            Debug.Log("Jumped");
         }
     }
     private bool CanJump()
     {
-        Debug.Log("CanJump");
         if (OnGround()) m_LastTimeOnGround = Time.time;
 
         bool l_InCoyoteTime = Time.time - m_LastTimeOnGround <= m_CoyoteTime;
@@ -198,7 +194,6 @@ public class FPSController : MonoBehaviour
         float l_Distance = 0.001f;
         if (Physics.Raycast(l_Ray, l_Distance, m_GroundLayer.value))
         {
-            Debug.Log("OnGround");
             var temp = m_Rigidbody.velocity;
             temp.y = 0;
             m_Rigidbody.velocity = temp;

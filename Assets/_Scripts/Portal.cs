@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Portal: MonoBehaviour
+
+public class Portal : MonoBehaviour
 {
     [Header("References")]
     public Camera m_Camera;
     FPSController m_FPSController;
     public Transform m_OtherPortal;
     public Portal m_MirrorPortal;
+    public Renderer m_Renderer;
 
     [Space]
     public float m_OffsetNearPlane = 0.1f;
@@ -19,8 +22,17 @@ public class Portal: MonoBehaviour
     public float m_ValidPointsOffset = 0.1f;
     public float m_MinValidDotAngle = 0.95f;
 
-    private Collider m_ColliderPlaced;
+    public Collider m_WallCollider;
+    private List<PortableObject> m_PortableObjects = new();
+    private List<PortableObject> m_BannedObjects = new();
 
+
+    public bool IsPlaced => m_IsPlaced;
+    bool m_IsPlaced;
+    private void Awake()
+    {
+        m_IsPlaced = true;
+    }
     private void Start()
     {
         m_FPSController = GameController.GetGameController().m_Player.GetComponent<FPSController>();
@@ -28,13 +40,49 @@ public class Portal: MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Teleportable l_Teleportable = other.GetComponent<Teleportable>();
-        if (l_Teleportable != null)
+        var l_Obj = other.GetComponent<PortableObject>();
+        if (l_Obj != null)
         {
-            Debug.Log("Teleportable in range"); 
-            if (l_Teleportable.CanTeleport(this))
+            Debug.Log("Portal Enter Triggered " + gameObject.name);
+            if (l_Obj.IsMovingTowardsPortal(this))
             {
-                l_Teleportable.Teleport(this);
+                m_PortableObjects.Add(l_Obj);
+                l_Obj.SetIsInPortal(this, m_MirrorPortal, m_WallCollider);
+                //Debug.Break();
+            }
+        }
+    }
+
+    private bool IsHorizontalPosition()
+    {
+        float l_Dot = Vector3.Dot(transform.forward, Vector3.forward);
+        return l_Dot < 0.001;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        var l_Obj = other.GetComponent<PortableObject>();
+        if (m_PortableObjects.Contains(l_Obj))
+        {
+            Debug.Log("Portal Exit Triggered");
+            m_PortableObjects.Remove(l_Obj);
+            l_Obj.ExitPortal(m_WallCollider);
+        }
+    }
+
+
+    private void Update()
+    {
+        m_Renderer.enabled = m_MirrorPortal.IsPlaced;
+
+        for (int i = 0; i < m_PortableObjects.Count; i++)
+        {
+            var l_Obj = m_PortableObjects[i];
+            Vector3 l_ObjPos = transform.InverseTransformPoint(l_Obj.CenterPos);
+            
+            if (l_ObjPos.z < 0.0f)
+            {
+                l_Obj.Warp();
             }
         }
     }
@@ -64,7 +112,7 @@ public class Portal: MonoBehaviour
     {
         Vector3 l_StartPosition = transform.position;
         Quaternion l_StartRotation = transform.rotation;
-        PlacePortal(Position, Normal, ShootPosition);
+        SetPortalTransform(Position, Normal, ShootPosition);
         gameObject.SetActive(false);
         bool l_IsValid = true;
 
@@ -115,14 +163,14 @@ public class Portal: MonoBehaviour
         return l_IsValid;
     }
 
-    private void PlacePortal(Vector3 _Position, Vector3 _Normal, Vector3 _ShootPosition)
+    private void SetPortalTransform(Vector3 _Position, Vector3 _Normal, Vector3 _ShootPosition)
     {
         transform.position = _Position;
         Vector3 l_ShootDir = _Position - _ShootPosition;
         l_ShootDir.Normalize();
         Quaternion l_DirQuaternion = Quaternion.LookRotation(l_ShootDir);
         transform.rotation = Quaternion.LookRotation(_Normal);
-        if (IsHorizontal())
+        if (_Normal == Vector3.up || _Normal == Vector3.down)
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, l_DirQuaternion.eulerAngles.y);
     }
 
@@ -131,9 +179,20 @@ public class Portal: MonoBehaviour
         return transform.forward == Vector3.up ||transform.forward == Vector3.down;
     }
 
-    public void SetColliderPlaced(Collider _Collider)
+    public void SetWallCollider(Collider _Collider)
     {
-        m_ColliderPlaced = _Collider;
+        m_WallCollider = _Collider;
         Debug.Log(_Collider.gameObject.name);
+    }
+
+    public void SetIsPlaced(bool v)
+    {
+        m_IsPlaced = v;
+        gameObject.SetActive(v);
+    }
+
+    public void AddBanned(PortableObject portableObject)
+    {
+        m_BannedObjects.Add(portableObject);
     }
 }

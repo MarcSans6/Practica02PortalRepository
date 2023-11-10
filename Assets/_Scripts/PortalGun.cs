@@ -60,7 +60,7 @@ public class PortalGun: MonoBehaviour
             if (_Portal.IsValidPosition(m_RayCastCamera.transform.position, l_RaycastHit.point, l_RaycastHit.normal, m_ShootableSurface.value))
             {
                 _Portal.gameObject.SetActive(true);
-                _Portal.SetColliderPlaced(l_RaycastHit.collider);
+                _Portal.SetWallCollider(l_RaycastHit.collider);
             }
         }
     }

@@ -25,9 +25,6 @@ public class Teleportable: MonoBehaviour
         {
             return _Portal.m_MirrorPortal.isActiveAndEnabled;
         }
-        Vector3 l_Temp = m_Rigidbody.velocity;
-        l_Temp.y = 0;
-        m_Forward = l_Temp.normalized;
         Vector3 l_RotatedForward = new(m_Forward.x, -Mathf.Tan(_Portal.m_OtherPortal.rotation.eulerAngles.y), m_Forward.z);
         Debug.Log("Can teleport");
         float l_DotAngle = Vector3.Dot(_Portal.m_OtherPortal.forward, l_RotatedForward);
@@ -42,11 +39,11 @@ public class Teleportable: MonoBehaviour
         Vector3 l_WorldDir = _Portal.m_MirrorPortal.transform.TransformDirection(l_LocalDir);
         Vector3 l_Position = l_WorldPosition + l_WorldDir * m_PortalOffset;
         m_Rigidbody.MovePosition(l_Position);
-        Debug.Break();
+        //Debug.Break();
         Vector3 l_LocalVelocity = _Portal.m_OtherPortal.InverseTransformDirection(m_Rigidbody.velocity);
         Vector3 l_WorldVelocity = _Portal.m_MirrorPortal.transform.TransformDirection(l_LocalVelocity);
         m_Rigidbody.velocity = l_WorldVelocity;
-        Debug.Break();
+        //Debug.Break();
     }
 }
 
