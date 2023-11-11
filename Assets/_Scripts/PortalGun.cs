@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PortalGun: MonoBehaviour
 {
     [Header("References")]
     public Camera m_RayCastCamera;
+    public PortalPreview m_BluePreview;
+    public PortalPreview m_OrangePreview;
 
     [Header("Shoot Portals")]
     public Portal m_BluePortal;
@@ -31,7 +34,6 @@ public class PortalGun: MonoBehaviour
     [Header("Debug")]
     public KeyCode m_ToggleShootingActivated = KeyCode.P;
     public bool m_ShootingActivated = false;
-
     private void Update()
     {
         HandleAttachObjects();
@@ -43,35 +45,39 @@ public class PortalGun: MonoBehaviour
 #endif
             HandleShootPortals();
 
-
     }
 
     private void HandleShootPortals()
     {
-        if (Input.GetKeyDown(m_ShootOrangePortalKeyCode))
-        {
-            TryShootPortal(m_OrangePortal);
+        m_OrangePreview.SetShow(false);
+        m_BluePreview.SetShow(false);
 
-        }
-        else if (Input.GetKeyDown(m_ShootBluePortalKeyCode))
-        {
-            TryShootPortal(m_BluePortal);
-        }
+        if (Input.GetKey(m_ShootOrangePortalKeyCode))
+            TryPlacePreview(m_OrangePreview);
+
+        else if (Input.GetKey(m_ShootBluePortalKeyCode))
+            TryPlacePreview(m_BluePreview);
+
+        if (Input.GetKeyUp(m_ShootOrangePortalKeyCode) && m_OrangePreview.IsValid)
+            m_OrangePortal.PlacePortal(m_OrangePreview.transform.position,
+                m_OrangePreview.transform.rotation, m_OrangePreview.transform.localScale);
+
+        else if (Input.GetKeyUp(m_ShootBluePortalKeyCode) && m_BluePreview.IsValid)
+            m_BluePortal.PlacePortal(m_BluePreview.transform.position,
+                m_BluePreview.transform.rotation, m_BluePreview.transform.localScale);
     }
 
-    private void TryShootPortal(Portal _Portal)
+    private void TryPlacePreview(PortalPreview _Preview)
     {
         Ray l_Ray = m_RayCastCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit l_RaycastHit;
 
         if (Physics.Raycast(l_Ray, out l_RaycastHit, m_MaxDistanceToShoot, m_ShootableSurface.value))
         {
-            if (_Portal.IsValidPosition(m_RayCastCamera.transform.position, l_RaycastHit.point, l_RaycastHit.normal, m_ShootableSurface.value))
-            {
-                _Portal.gameObject.SetActive(true);
-                _Portal.SetIsPlaced(true);
-                _Portal.SetWallCollider(l_RaycastHit.collider);
-            }
+            bool l_IsValidPos = _Preview.IsValidPosition(m_RayCastCamera.transform.position, 
+                                        l_RaycastHit.point, l_RaycastHit.normal, m_ShootableSurface.value);
+            
+            _Preview.SetShow(l_IsValidPos);
         }
     }
 
