@@ -33,13 +33,12 @@ public class FPSController : MonoBehaviour
     public LayerMask m_GroundLayer;
     [SerializeField] float m_WalkingSpeed;
     [SerializeField] float m_SprintSpeed;
-    [SerializeField] float m_CrouchingSpeed;
+    [Range(.0f, 1f)]
+    [SerializeField] float m_HorizontalDrag;
     [SerializeField] float m_JumpForce;
     [SerializeField] float m_CoyoteTime;
     float m_LastTimeOnGround;
-    float m_VerticalSpeed;
-    public Vector3 MovementDirection => m_MovementDirection;
-    Vector3 m_MovementDirection;
+    Vector3 m_LastHorizontalDirection;
 
     [Header("Input")]
     [SerializeField] KeyCode m_UpKeyCode = KeyCode.W;
@@ -48,7 +47,6 @@ public class FPSController : MonoBehaviour
     [SerializeField] KeyCode m_RightKeyCode = KeyCode.D;
     [SerializeField] KeyCode m_JumpKeyCode = KeyCode.Space;
     [SerializeField] KeyCode m_SprintKeyCode = KeyCode.LeftShift;
-    //[SerializeField] KeyCode m_CrouchKeyCode = KeyCode.LeftControl;
     [Space]
     [SerializeField] Camera m_Camera;
     public Camera Camera => m_Camera;
@@ -64,8 +62,6 @@ public class FPSController : MonoBehaviour
     [SerializeField] KeyCode m_DebugLockAngleKeyCode = KeyCode.O;
     [SerializeField] KeyCode m_DebugLockKeyCode = KeyCode.I;
 
-    CharacterController m_CharacterController;
-
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -79,14 +75,11 @@ public class FPSController : MonoBehaviour
 #endif
         HandleAim();
         HandleMovement();
-        HandleJump();
+    }
 
-        if (Moving)
-        {
-            //m_PitchCtrlAnimation.Play();
-        }
-        //else
-            //m_PitchCtrlAnimation.Stop();
+    private void Update()
+    {
+        HandleJump();
     }
 
     private void FreezMouseDebug()
@@ -140,14 +133,74 @@ public class FPSController : MonoBehaviour
     #region "Movement Code"
     private void HandleMovement()
     {
-        Vector3 l_HorizontalDirection = GetHorizontalDirection();
-        float l_Speed = m_WalkingSpeed;
+        Vector3 l_HorizontalInput = GetHorizontalInput();
+
+        // If l_HorizontalInput is different from last frame, then the rb velocity is set to 0.
+        if (ChangedDirection(l_HorizontalInput)) 
+        {
+            ResetHorizontalVelocity();
+        }
+        ///
+
+        // We initialize the force we would apply this frame based on the speed we want to achieve.
+        float l_Force = GetHorizontalForceFromSpeed(m_WalkingSpeed);
         if (CanSprint())
-            l_Speed = m_SprintSpeed;
-        Vector3 l_Velocity = l_Speed * l_HorizontalDirection;
-        m_Rigidbody.velocity = new Vector3(l_Velocity.x, m_Rigidbody.velocity.y, l_Velocity.z);
+            l_Force = GetHorizontalForceFromSpeed(m_SprintSpeed);
+        /// 
+
+        // We just add force this frame in 2 different situations:
+        //  - if the player is grounded
+        //  - if the player is mid air but makes an input.
+        // This way, if there is no input in air, the player follows the inertia.
+        if (OnGround() || l_HorizontalInput != Vector3.zero)
+        {
+            m_Rigidbody.AddForce(l_Force * l_HorizontalInput);
+        }
+        ///
+
+        // We just apply drag if the player input is 0. This way if the player is moving the drag isn't applied.
+        if (l_HorizontalInput == Vector3.zero)
+            ApplyDrag(m_HorizontalDrag);
+        ///    
+
     }
-    private Vector3 GetHorizontalDirection()
+
+    //Resets the horizontal velocity to 0.
+    private void ResetHorizontalVelocity()
+    {
+        Vector3 l_Vel = m_Rigidbody.velocity;
+        l_Vel.x = 0;
+        l_Vel.z = 0;
+        m_Rigidbody.velocity = l_Vel;
+    }
+
+    // Returns true if the player was moving in a direction last frame and if it changed this frame.
+    private bool ChangedDirection(Vector3 l_HorizontalDirection)
+    {
+        bool l_Changed = m_LastHorizontalDirection != Vector3.zero && 
+            m_LastHorizontalDirection != l_HorizontalDirection && l_HorizontalDirection != Vector3.zero;
+        m_LastHorizontalDirection = l_HorizontalDirection;
+        return l_Changed;
+    }
+
+    // Simulates the drag effect of the rigidbody, just in the horizontal axis.
+    private void ApplyDrag(float l_HorizontalDrag)
+    {
+        Vector3 l_Vel = m_Rigidbody.velocity;
+        l_Vel.x *= 1.0f - l_HorizontalDrag;
+        l_Vel.z *= 1.0f - l_HorizontalDrag;
+        m_Rigidbody.velocity = l_Vel;
+    }
+
+    // Returns a force that applied makes the rb horizontal velocity magnitude the speed we desire.
+    private float GetHorizontalForceFromSpeed(float _DesiredSpeed)
+    {
+        float l_HorizontalSpeed = new Vector3(m_Rigidbody.velocity.x, .0f, m_Rigidbody.velocity.z).magnitude;
+        float l_TrueDesiredSpeed = l_HorizontalSpeed > _DesiredSpeed ? 0 : _DesiredSpeed - l_HorizontalSpeed;
+        float l_Force = m_Rigidbody.mass * (l_TrueDesiredSpeed / Time.fixedDeltaTime);
+        return l_Force;
+    }
+    private Vector3 GetHorizontalInput()
     {
         float l_YawInRadians = m_Yaw * Mathf.Deg2Rad;
         float l_Yaw90InRadians = (m_Yaw + 90.0f) * Mathf.Deg2Rad;
@@ -176,10 +229,19 @@ public class FPSController : MonoBehaviour
     {
         if (CanJump())
         {
-            Vector3 l_Force = Vector3.up * m_JumpForce;
-            m_Rigidbody.AddForce(l_Force);
+            Jump();
         }
     }
+
+    private void Jump()
+    {
+        Vector3 l_Temp = m_Rigidbody.velocity;
+        l_Temp.y = 0;
+        m_Rigidbody.velocity = l_Temp;
+        Vector3 l_Force = Vector3.up * m_JumpForce;
+        m_Rigidbody.AddForce(l_Force);
+    }
+
     private bool CanJump()
     {
         if (OnGround()) m_LastTimeOnGround = Time.time;
@@ -190,17 +252,14 @@ public class FPSController : MonoBehaviour
 
     private bool OnGround()
     {
-        Ray l_Ray = new Ray(transform.position, Vector3.down);
-        float l_Distance = 0.001f;
+        Ray l_Ray = new Ray(transform.position + 0.1f*Vector3.up, Vector3.down);
+        float l_Distance = 0.2f;
         if (Physics.Raycast(l_Ray, l_Distance, m_GroundLayer.value))
         {
-            var temp = m_Rigidbody.velocity;
-            temp.y = 0;
-            m_Rigidbody.velocity = temp;
             return true;
         }
         return false;
-        
+
     }
 
     private bool CanSprint()
@@ -209,14 +268,6 @@ public class FPSController : MonoBehaviour
     }
 
     #endregion
-
-    #region "ICollector"
-
-    #endregion
-    void DeactivatePlayer()
-    {
-        this.enabled = false;
-    }
 
     public void RestartElement()
     {

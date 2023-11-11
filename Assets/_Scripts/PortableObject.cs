@@ -9,17 +9,16 @@ public class PortableObject : MonoBehaviour
     public Vector3 CenterPos => m_CenterPosition.position;
     [SerializeField] protected Transform m_CenterPosition;
     [Range(0.0f,1.0f)]
-    [SerializeField] protected float m_MinDotToWarp = 40.0f;
     //private int m_PortalCount = 0;
 
-    private Portal m_InPortal;
-    private Portal m_OutPortal;
+    protected Portal m_InPortal;
+    protected Portal m_OutPortal;
 
-    private new Rigidbody m_Rigidbody;
-    protected new Collider m_Collider;
+    protected Rigidbody m_Rigidbody;
+    private Collider m_Collider;
     private bool m_CanWarp = true;
 
-    private static readonly Quaternion m_HalfTurn = Quaternion.Euler(.0f, 180.0f, .0f);
+    protected static readonly Quaternion m_HalfTurn = Quaternion.Euler(.0f, 180.0f, .0f);
     protected virtual void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -72,28 +71,12 @@ public class PortableObject : MonoBehaviour
         //}
     }
 
-    public bool CanWarp(Portal _Portal)
+    public bool CanWarp()
     {
         return m_CanWarp;
-
-        Vector3 l_PortalEnteringDirection = _Portal.m_OtherPortal.transform.forward;
-        Vector3 l_Forward = m_Rigidbody.velocity.normalized;
-        if (_Portal.IsInHorizontalRotation())
-        {
-            return Mathf.Sign(l_PortalEnteringDirection.y) == Mathf.Sign(l_Forward.y);
-        }
-        else
-        {
-            Debug.Log("FuckedSituation");
-            l_PortalEnteringDirection.y = 0;
-            l_Forward.y = 0;
-            return Vector3.Dot(l_Forward, l_PortalEnteringDirection) >= m_MinDotToWarp;
-        }
-
-        
     }
 
-    public void Warp()
+    public virtual void Warp()
     {
         var l_InTransform = m_InPortal.transform;
         var l_OutTransform = m_OutPortal.transform;
@@ -114,7 +97,7 @@ public class PortableObject : MonoBehaviour
         l_RelativeVel = m_HalfTurn * l_RelativeVel;
         m_Rigidbody.velocity = l_OutTransform.TransformDirection(l_RelativeVel);
 
-        //Swap portal references
+        //Swap portal references in case object doesn't exit the collider
         var l_Tmp = m_InPortal;
         m_InPortal = m_OutPortal;
         m_OutPortal = l_Tmp;

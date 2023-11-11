@@ -10,16 +10,16 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Portal
   - Water
   - UI
   - Wall
   - PortalGun
   - Objects
   - Ground
-  - 
-  - 
-  - 
+  - PortalFrame
+  - PlayerPortalCollider
+  - Player
   - 
   - 
   - 

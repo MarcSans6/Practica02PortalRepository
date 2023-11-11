@@ -28,11 +28,22 @@ public class PortalGun: MonoBehaviour
     public KeyCode m_ShootBluePortalKeyCode = KeyCode.Mouse0;
     public KeyCode m_ShootOrangePortalKeyCode = KeyCode.Mouse1;
 
+    [Header("Debug")]
+    public KeyCode m_ToggleShootingActivated = KeyCode.P;
+    public bool m_ShootingActivated = false;
 
     private void Update()
     {
         HandleAttachObjects();
-        HandleShootPortals();
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(m_ToggleShootingActivated))
+            m_ShootingActivated = !m_ShootingActivated;
+
+        if (m_ShootingActivated)
+#endif
+            HandleShootPortals();
+
+
     }
 
     private void HandleShootPortals()

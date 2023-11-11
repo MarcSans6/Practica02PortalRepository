@@ -50,7 +50,7 @@ public class Portal : MonoBehaviour
         if (l_Obj != null)
         {
             Debug.Log("Portal Enter Triggered " + gameObject.name);
-            if (l_Obj.CanWarp(this))
+            if (l_Obj.CanWarp())
             {
                 m_PortableObjects.Add(l_Obj);
                 l_Obj.SetIsInPortal(this, m_MirrorPortal, m_WallCollider);
@@ -119,12 +119,6 @@ public class Portal : MonoBehaviour
         gameObject.SetActive(false);
         bool l_IsValid = true;
 
-        if (m_MirrorPortal.isActiveAndEnabled)
-        {
-            float l_DistanceToMirrorPortal = Vector3.Distance(transform.position, m_MirrorPortal.transform.position);
-            l_IsValid = l_DistanceToMirrorPortal >= m_MinDistanceToMirrorPortal;
-        }
-
         for (int i = 0; i < m_ValidPoints.Count; i++)
         {
             Vector3 l_Direction = m_ValidPoints[i].position - ShootPosition;
@@ -132,6 +126,15 @@ public class Portal : MonoBehaviour
             l_Direction.Normalize();
             Ray l_Ray = new Ray(ShootPosition, l_Direction);
             RaycastHit l_RayCastHit;
+            //We check if the mirror portal is close to this valid point, just if both portals are facing the same direction
+            if (m_MirrorPortal.isActiveAndEnabled && m_MirrorPortal.transform.forward == transform.forward)
+            {
+                float l_DistanceToMirrorPortal = Vector3.Distance(m_ValidPoints[i].position, m_MirrorPortal.transform.position);
+                if (l_DistanceToMirrorPortal < m_MinDistanceToMirrorPortal)
+                {
+                    l_IsValid = false;
+                }
+            }
             if (Physics.Raycast(l_Ray, out l_RayCastHit, l_Distance + m_ValidPointsOffset, _LayerMask.value))
             {
 
@@ -198,5 +201,11 @@ public class Portal : MonoBehaviour
     public void AddBanned(PortableObject portableObject)
     {
         m_BannedObjects.Add(portableObject);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, m_MinDistanceToMirrorPortal);
     }
 }
