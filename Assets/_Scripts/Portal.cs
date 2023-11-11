@@ -12,6 +12,7 @@ public class Portal : MonoBehaviour
     public Transform m_OtherPortal;
     public Portal m_MirrorPortal;
     public Renderer m_Renderer;
+    public Transform m_Preview;
 
     [Space]
     public float m_OffsetNearPlane = 0.1f;
@@ -36,7 +37,7 @@ public class Portal : MonoBehaviour
     bool m_IsPlaced;
     private void Awake()
     {
-        m_IsPlaced = true;
+        m_IsPlaced = false;
         m_Collider = GetComponent<Collider>();
     }
     private void Start()
@@ -207,5 +208,11 @@ public class Portal : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, m_MinDistanceToMirrorPortal);
+    }
+
+    public void SetPreview(bool _Show)
+    {
+
+        m_Preview.gameObject.SetActive(_Show);
     }
 }

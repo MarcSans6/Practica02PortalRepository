@@ -17,7 +17,7 @@ public class PortalCrosshair : MonoBehaviour
     }
     private void Update()
     {
-        
+        CheckActivePortals();
     }   
 
     private void CheckActivePortals()
