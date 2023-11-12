@@ -15,6 +15,9 @@ public class PortalPreview : MonoBehaviour
     public float m_ValidPointsOffset;
     public float m_MinValidDotAngle;
 
+    public Collider WallCollider => m_WallCollider;
+    Collider m_WallCollider;
+
     public bool IsValid => m_IsValid;
     private bool m_IsValid;
 
@@ -75,6 +78,11 @@ public class PortalPreview : MonoBehaviour
         gameObject.SetActive(_Show);
     }
 
+    public void SetWallCollider(Collider _WallCollider)
+    {
+        m_WallCollider = _WallCollider;
+    }
+
     private void SetTransform(Vector3 _Position, Vector3 _Normal, Vector3 _ShootPosition)
     {
         transform.position = _Position;
@@ -83,7 +91,7 @@ public class PortalPreview : MonoBehaviour
         {
             Vector3 l_ShootDir = _Position - _ShootPosition;
             l_ShootDir.Normalize();
-            Quaternion l_DirQuaternion = Quaternion.LookRotation(l_ShootDir);
+            Quaternion l_DirQuaternion = Quaternion.LookRotation(-l_ShootDir);
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, l_DirQuaternion.eulerAngles.y);
         }
     }

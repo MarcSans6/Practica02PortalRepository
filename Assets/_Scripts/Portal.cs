@@ -23,12 +23,10 @@ public class Portal : MonoBehaviour
     private Collider m_Collider;
 
     public bool IsPlaced => m_IsPlaced;
+    bool m_IsPlaced = false;
 
-
-    bool m_IsPlaced;
     private void Awake()
     {
-        m_IsPlaced = false;
         m_Collider = GetComponent<Collider>();
     }
     private void Start()
@@ -42,7 +40,7 @@ public class Portal : MonoBehaviour
         if (l_Obj != null)
         {
             Debug.Log("Portal Enter Triggered " + gameObject.name);
-            if (l_Obj.CanWarp())
+            if (l_Obj.CanWarp() && m_MirrorPortal.IsPlaced)
             {
                 m_PortableObjects.Add(l_Obj);
                 l_Obj.SetIsInPortal(this, m_MirrorPortal, m_WallCollider);
@@ -64,8 +62,6 @@ public class Portal : MonoBehaviour
 
     private void LateUpdate()
     {
-        //m_Renderer.enabled = m_MirrorPortal.IsPlaced;
-
         for (int i = 0; i < m_PortableObjects.Count; i++)
         {
             var l_Obj = m_PortableObjects[i];
@@ -85,7 +81,6 @@ public class Portal : MonoBehaviour
             }
         }
         UpdateMirrorPortalCamera();
-
     }
     private void UpdateMirrorPortalCamera()
     {
@@ -105,20 +100,21 @@ public class Portal : MonoBehaviour
     
     public bool IsInHorizontalRotation()
     {
-        return transform.forward == Vector3.up ||transform.forward == Vector3.down;
-    }
+        Vector3 l_Forward = transform.forward;
+        l_Forward.x = 0;
+        l_Forward.Normalize();
 
-    public void SetWallCollider(Collider _Collider)
-    {
-        m_WallCollider = _Collider;
-        Debug.Log(_Collider.gameObject.name);
+        float l_DotAngle = Vector3.Dot(l_Forward, Vector3.forward);
+        Debug.Log("Dot angle: " + l_DotAngle);
+        return l_DotAngle < 0.01f && l_DotAngle > -0.01f;
     }
-
-    public void PlacePortal(Vector3 _Position, Quaternion _Rotation, Vector3 _LocalScale)
+    public void PlacePortal(Vector3 _Position, Quaternion _Rotation, Vector3 _LocalScale, Collider _WallCollider)
     {
         transform.position = _Position;
         transform.rotation = _Rotation;
         transform.localScale = _LocalScale;
+        m_WallCollider = _WallCollider;
+        Debug.Log(this.name + " is Horizontal: " + IsInHorizontalRotation());
         SetIsPlaced(true);
     }
 
@@ -126,6 +122,7 @@ public class Portal : MonoBehaviour
     {
         m_IsPlaced = v;
         gameObject.SetActive(v);
+        Debug.Log(gameObject.name + " IS PLACED: " + v);
     }
 
     public void AddBanned(PortableObject portableObject)

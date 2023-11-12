@@ -26,7 +26,7 @@ public class PortalGun: MonoBehaviour
     Rigidbody m_ObjectAttached;
 
     [Header("Input")]
-    public KeyCode m_ShootObjectKeyCode = KeyCode.Mouse0;
+    public KeyCode m_ShootObjectKeyCode = KeyCode.Q;
     public KeyCode m_AttachObjectKeyCode = KeyCode.E;
     public KeyCode m_ShootBluePortalKeyCode = KeyCode.Mouse0;
     public KeyCode m_ShootOrangePortalKeyCode = KeyCode.Mouse1;
@@ -36,14 +36,14 @@ public class PortalGun: MonoBehaviour
     public bool m_ShootingActivated = false;
     private void Update()
     {
-        HandleAttachObjects();
 #if UNITY_EDITOR
         if (Input.GetKeyDown(m_ToggleShootingActivated))
             m_ShootingActivated = !m_ShootingActivated;
 
         if (m_ShootingActivated)
 #endif
-            HandleShootPortals();
+        HandleShootPortals();
+        HandleAttachObjects();
 
     }
 
@@ -51,6 +51,11 @@ public class PortalGun: MonoBehaviour
     {
         m_OrangePreview.SetShow(false);
         m_BluePreview.SetShow(false);
+
+        if (m_ObjectAttached != null)
+        {
+            return;
+        }
 
         if (Input.GetKey(m_ShootOrangePortalKeyCode))
             TryPlacePreview(m_OrangePreview);
@@ -60,11 +65,11 @@ public class PortalGun: MonoBehaviour
 
         if (Input.GetKeyUp(m_ShootOrangePortalKeyCode) && m_OrangePreview.IsValid)
             m_OrangePortal.PlacePortal(m_OrangePreview.transform.position,
-                m_OrangePreview.transform.rotation, m_OrangePreview.transform.localScale);
+                m_OrangePreview.transform.rotation, m_OrangePreview.transform.localScale, m_OrangePreview.WallCollider);
 
         else if (Input.GetKeyUp(m_ShootBluePortalKeyCode) && m_BluePreview.IsValid)
             m_BluePortal.PlacePortal(m_BluePreview.transform.position,
-                m_BluePreview.transform.rotation, m_BluePreview.transform.localScale);
+                m_BluePreview.transform.rotation, m_BluePreview.transform.localScale, m_BluePreview.WallCollider);
     }
 
     private void TryPlacePreview(PortalPreview _Preview)
@@ -75,9 +80,13 @@ public class PortalGun: MonoBehaviour
         if (Physics.Raycast(l_Ray, out l_RaycastHit, m_MaxDistanceToShoot, m_ShootableSurface.value))
         {
             bool l_IsValidPos = _Preview.IsValidPosition(m_RayCastCamera.transform.position, 
-                                        l_RaycastHit.point, l_RaycastHit.normal, m_ShootableSurface.value);
-            
+            l_RaycastHit.point, l_RaycastHit.normal, m_ShootableSurface.value);
             _Preview.SetShow(l_IsValidPos);
+            if (l_IsValidPos)
+            {
+                _Preview.SetWallCollider(l_RaycastHit.collider);
+            }
+            
         }
     }
 

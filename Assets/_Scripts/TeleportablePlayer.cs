@@ -9,11 +9,6 @@ public class TeleportablePlayer: Teleportable
         m_FPSController = GetComponent<FPSController>();
     }
 
-    public override bool CanTeleport(Portal _Portal)
-    {
-        return base.CanTeleport(_Portal);
-    }
-
     public override void Teleport(Portal _Portal)
     {
         base.Teleport(_Portal);
