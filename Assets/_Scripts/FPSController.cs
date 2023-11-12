@@ -123,6 +123,7 @@ public class FPSController : MonoBehaviour
     public void SetYaw(float _Yaw)
     {
         m_Yaw = _Yaw;
+        transform.rotation = Quaternion.Euler(0.0f, m_Yaw, 0.0f);
     }
 
     #endregion
