@@ -4,6 +4,8 @@ using System.Linq.Expressions;
 using UnityEditor.UIElements;
 using UnityEngine;
 
+[RequireComponent(typeof(PortablePlayer))]
+[RequireComponent(typeof(Rigidbody))]
 public class FPSController : MonoBehaviour
 {
     public bool CamRotating { get; private set; }
@@ -11,7 +13,15 @@ public class FPSController : MonoBehaviour
     public bool Sprinting { get; private set; }
     public bool Jumping { get; private set; }
 
+
+    [Header("References")]
+    [SerializeField] Transform m_YawController;
+    public Transform YawController => m_YawController;
+    [SerializeField] Transform m_PitchController;
+    PortablePlayer m_PortablePlayer;
     Rigidbody m_Rigidbody;
+    [SerializeField] Camera m_Camera;
+    public Camera Camera => m_Camera;
 
     [Header("Aim")]
     [SerializeField] float m_YawSpeed;
@@ -22,12 +32,8 @@ public class FPSController : MonoBehaviour
     [Space]
     [SerializeField] bool m_YawInverted;
     [SerializeField] bool m_PitchInverted;
-    [SerializeField] Transform m_PitchController;
     float m_Yaw;
     float m_Pitch;
-
-    [Header("Shoot")]
-    public PortalGun m_PortalGun;
 
     [Header("Movement")]
     public LayerMask m_GroundLayer;
@@ -39,6 +45,8 @@ public class FPSController : MonoBehaviour
     [SerializeField] float m_CoyoteTime;
     float m_LastTimeOnGround;
     Vector3 m_LastHorizontalDirection;
+    CapsuleCollider m_Collider;
+    bool m_IsMidAirAfterWarp;
 
     [Header("Input")]
     [SerializeField] KeyCode m_UpKeyCode = KeyCode.W;
@@ -48,8 +56,6 @@ public class FPSController : MonoBehaviour
     [SerializeField] KeyCode m_JumpKeyCode = KeyCode.Space;
     [SerializeField] KeyCode m_SprintKeyCode = KeyCode.LeftShift;
     [Space]
-    [SerializeField] Camera m_Camera;
-    public Camera Camera => m_Camera;
 
     [Header("Animations")]
     [SerializeField] Animation m_PitchCtrlAnimation;
@@ -62,9 +68,16 @@ public class FPSController : MonoBehaviour
     [SerializeField] KeyCode m_DebugLockAngleKeyCode = KeyCode.O;
     [SerializeField] KeyCode m_DebugLockKeyCode = KeyCode.I;
 
+    private void OnEnable() => m_PortablePlayer.OnWarp += OnWarp;
+    private void OnDisable() => m_PortablePlayer.OnWarp -= OnWarp;
+
+    void OnWarp() => m_IsMidAirAfterWarp = true;
+
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
+        m_Collider = GetComponent<CapsuleCollider>();
+        m_PortablePlayer = GetComponent<PortablePlayer>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -117,13 +130,14 @@ public class FPSController : MonoBehaviour
 
         m_Pitch = Mathf.Clamp(m_Pitch, m_MinPitch, m_MaxPitch);
 
-        transform.rotation = Quaternion.Euler(0.0f, m_Yaw, 0.0f);
+        SetYaw(m_Yaw);
         m_PitchController.localRotation = Quaternion.Euler(m_Pitch, 0.0f, 0.0f);
     }
     public void SetYaw(float _Yaw)
     {
         m_Yaw = _Yaw;
-        transform.rotation = Quaternion.Euler(0.0f, m_Yaw, 0.0f);
+        m_YawController.transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, 
+            m_Yaw, transform.rotation.eulerAngles.z);
     }
 
     #endregion
@@ -159,10 +173,15 @@ public class FPSController : MonoBehaviour
         }
         ///
 
+
         // We just apply drag if the player input is 0. This way if the player is moving the drag isn't applied.
-        if (l_HorizontalInput == Vector3.zero)
+        if (l_HorizontalInput == Vector3.zero && !m_IsMidAirAfterWarp)
             ApplyDrag(m_HorizontalDrag);
         ///    
+        else if(l_HorizontalInput != Vector3.zero)
+        {
+            m_IsMidAirAfterWarp = false;
+        }
 
     }
 
@@ -253,10 +272,11 @@ public class FPSController : MonoBehaviour
 
     private bool OnGround()
     {
-        Ray l_Ray = new Ray(transform.position + 0.1f*Vector3.up, Vector3.down);
-        float l_Distance = 0.2f;
+        Ray l_Ray = new Ray(transform.position, Vector3.down);
+        float l_Distance = (m_Collider.height / 2) + 0.01f;
         if (Physics.Raycast(l_Ray, l_Distance, m_GroundLayer.value))
         {
+            m_IsMidAirAfterWarp = false;
             return true;
         }
         return false;
@@ -273,5 +293,12 @@ public class FPSController : MonoBehaviour
     public void RestartElement()
     {
         this.enabled = true;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+
+        Gizmos.DrawLine(m_PitchController.position, m_PitchController.position + m_PitchController.forward * 2);
     }
 }

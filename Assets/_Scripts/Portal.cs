@@ -56,6 +56,7 @@ public class Portal : MonoBehaviour
             Debug.Log("Portal Exit Triggered " + this.gameObject.name);
             m_PortableObjects.Remove(l_Obj);
             l_Obj.ExitPortal(m_WallCollider);
+            Debug.Log("ExitPortal");
         }
     }
 
@@ -73,6 +74,8 @@ public class Portal : MonoBehaviour
                 if (l_ObjPos.x < l_ColliderSize.x/2 && l_ObjPos.z < l_ColliderSize.z/2) // The object is inside the collider in
                 {                                                                       // the horizontal axis
                     l_Obj.Warp();
+                    Debug.Log("Warp");
+                    //Debug.Break();
                 }
                 else
                 {
@@ -96,6 +99,7 @@ public class Portal : MonoBehaviour
 
         float l_Distance = Vector3.Distance(l_WorldPosition, m_MirrorPortal.transform.position) + m_OffsetNearPlane;
         m_MirrorPortal.m_Camera.nearClipPlane = l_Distance;
+        m_MirrorPortal.m_Camera.useOcclusionCulling = true;
     }
     
     public bool IsInHorizontalRotation()

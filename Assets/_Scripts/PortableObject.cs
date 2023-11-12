@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PortableObject : MonoBehaviour
 {
+    public bool m_LockRotation = false;
+
     public Vector3 CenterPos => m_CenterPosition.position;
     [SerializeField] protected Transform m_CenterPosition;
     [Range(0.0f,1.0f)]
@@ -86,10 +89,14 @@ public class PortableObject : MonoBehaviour
         l_RelativePos = m_HalfTurn * l_RelativePos;
         transform.position = l_OutTransform.TransformPoint(l_RelativePos);
 
+
         //Update rotation
-        Quaternion l_RelativeRot = Quaternion.Inverse(l_InTransform.rotation) * transform.rotation;
-        l_RelativeRot = m_HalfTurn * l_RelativeRot;
-        transform.rotation = l_OutTransform.rotation * l_RelativeRot;
+        if (!m_LockRotation)
+        {
+            Quaternion l_RelativeRot = Quaternion.Inverse(l_InTransform.rotation) * transform.rotation;
+            l_RelativeRot = m_HalfTurn * l_RelativeRot;
+            transform.rotation = l_OutTransform.rotation * l_RelativeRot;
+        }
 
         //Update velocity of rigidbody
 
