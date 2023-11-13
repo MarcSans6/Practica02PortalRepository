@@ -16,17 +16,7 @@ public class PortalGun: MonoBehaviour
     public LayerMask m_ShootableSurface;
 
     [Header("Attach Objects")]
-    public Transform                            
-       
-        
-                                                                            
-        
-        
-        
-        
-        
-        
-                                            m_AttachingPosition;
+    public Transform m_AttachingPosition;
     public float m_AttachingSpeed = 2.0f;
     public LayerMask m_AttachObjectLayerMask;
     public float m_MaxDistanceToAttach = 5;

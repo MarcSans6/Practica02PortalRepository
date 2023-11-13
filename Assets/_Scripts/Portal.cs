@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 
@@ -40,6 +39,7 @@ public class Portal : MonoBehaviour
         var l_Obj = other.GetComponent<PortableObject>();
         if (l_Obj != null)
         {
+            Debug.Log("Portal Enter Triggered " + gameObject.name);
             if (l_Obj.CanWarp() && m_MirrorPortal.IsPlaced)
             {
                 m_PortableObjects.Add(l_Obj);
@@ -53,8 +53,10 @@ public class Portal : MonoBehaviour
         var l_Obj = other.GetComponent<PortableObject>();
         if (m_PortableObjects.Contains(l_Obj))
         {
+            Debug.Log("Portal Exit Triggered " + this.gameObject.name);
             m_PortableObjects.Remove(l_Obj);
             l_Obj.ExitPortal(m_WallCollider);
+            Debug.Log("ExitPortal");
         }
     }
 
@@ -72,6 +74,8 @@ public class Portal : MonoBehaviour
                 if (l_ObjPos.x < l_ColliderSize.x/2 && l_ObjPos.z < l_ColliderSize.z/2) // The object is inside the collider in
                 {                                                                       // the horizontal axis
                     l_Obj.Warp();
+                    Debug.Log("Warp");
+                    //Debug.Break();
                 }
                 else
                 {
@@ -83,23 +87,19 @@ public class Portal : MonoBehaviour
     }
     private void UpdateMirrorPortalCamera()
     {
-        Transform l_MirrorCamTransform = m_MirrorPortal.m_Camera.transform;
-
         //PlayerCamera world position to local position from otherPortal;
         Vector3 l_localPosition = m_OtherPortal.InverseTransformPoint(m_FPSController.Camera.transform.position);
         //Applies l_localPosition to the MirrorPortal, then transforms that position into WorldSpace;
         Vector3 l_WorldPosition = m_MirrorPortal.transform.TransformPoint(l_localPosition);
-        l_MirrorCamTransform.position = l_WorldPosition;
+        m_MirrorPortal.m_Camera.transform.position = l_WorldPosition;
 
         Vector3 l_localDirections = m_OtherPortal.InverseTransformDirection(m_FPSController.Camera.transform.forward);
         Vector3 l_WorldDirection = m_MirrorPortal.transform.TransformDirection(l_localDirections);
-        l_MirrorCamTransform.forward = l_WorldDirection;
+        m_MirrorPortal.m_Camera.transform.forward = l_WorldDirection;
 
-        float l_Distance = Vector3.Distance(l_WorldPosition, l_MirrorCamTransform.position) + m_OffsetNearPlane;
+        float l_Distance = Vector3.Distance(l_WorldPosition, m_MirrorPortal.transform.position) + m_OffsetNearPlane;
         m_MirrorPortal.m_Camera.nearClipPlane = l_Distance;
         m_MirrorPortal.m_Camera.useOcclusionCulling = true;
-
-        //l_MirrorCamTransform.rotation = Quaternion.Euler(l_MirrorCamTransform.rotation.x, l_MirrorCamTransform.rotation.y, 0.0f);
     }
     
     public bool IsInHorizontalRotation()
