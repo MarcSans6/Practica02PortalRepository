@@ -83,23 +83,22 @@ public class Portal : MonoBehaviour
     }
     private void UpdateMirrorPortalCamera()
     {
-        Transform l_MirrorCamTransform = m_MirrorPortal.m_Camera.transform;
-
         //PlayerCamera world position to local position from otherPortal;
         Vector3 l_localPosition = m_OtherPortal.InverseTransformPoint(m_FPSController.Camera.transform.position);
         //Applies l_localPosition to the MirrorPortal, then transforms that position into WorldSpace;
         Vector3 l_WorldPosition = m_MirrorPortal.transform.TransformPoint(l_localPosition);
-        l_MirrorCamTransform.position = l_WorldPosition;
+        m_MirrorPortal.m_Camera.transform.position = l_WorldPosition;
 
         Vector3 l_localDirections = m_OtherPortal.InverseTransformDirection(m_FPSController.Camera.transform.forward);
         Vector3 l_WorldDirection = m_MirrorPortal.transform.TransformDirection(l_localDirections);
-        l_MirrorCamTransform.forward = l_WorldDirection;
+        m_MirrorPortal.m_Camera.transform.forward = l_WorldDirection;
 
-        float l_Distance = Vector3.Distance(l_WorldPosition, l_MirrorCamTransform.position) + m_OffsetNearPlane;
+        float l_Distance = Vector3.Distance(l_WorldPosition, m_MirrorPortal.transform.position) + m_OffsetNearPlane;
         m_MirrorPortal.m_Camera.nearClipPlane = l_Distance;
         m_MirrorPortal.m_Camera.useOcclusionCulling = true;
 
-        //l_MirrorCamTransform.rotation = Quaternion.Euler(l_MirrorCamTransform.rotation.x, l_MirrorCamTransform.rotation.y, 0.0f);
+        Vector3 l_EulerCam = m_MirrorPortal.m_Camera.transform.rotation.eulerAngles;
+        m_MirrorPortal.m_Camera.transform.rotation = Quaternion.Euler(l_EulerCam.x, l_EulerCam.y, 0);
     }
     
     public bool IsInHorizontalRotation()
