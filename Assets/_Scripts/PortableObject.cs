@@ -104,6 +104,10 @@ public class PortableObject : MonoBehaviour
         l_RelativeVel = m_HalfTurn * l_RelativeVel;
         m_Rigidbody.velocity = l_OutTransform.TransformDirection(l_RelativeVel);
 
+        //Calls the AfterWarp, in case any subclass wants to use it.
+        AfterWarp(l_InTransform, l_OutTransform);
+
+
         //Swap portal references in case object doesn't exit the collider
         var l_Tmp = m_InPortal;
         m_InPortal = m_OutPortal;
@@ -114,5 +118,10 @@ public class PortableObject : MonoBehaviour
     public void SetCanWarp(bool v)
     {
         m_CanWarp = v;
+    }
+
+    protected virtual void AfterWarp(Transform _InTransform, Transform _OutTransform)
+    {
+
     }
 }
