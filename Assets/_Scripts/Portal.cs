@@ -98,7 +98,7 @@ public class Portal : MonoBehaviour
         m_MirrorPortal.m_Camera.useOcclusionCulling = true;
 
         Vector3 l_EulerCam = m_MirrorPortal.m_Camera.transform.rotation.eulerAngles;
-        m_MirrorPortal.m_Camera.transform.rotation = Quaternion.Euler(l_EulerCam.x, l_EulerCam.y, 0);
+        m_MirrorPortal.m_Camera.transform.rotation = Quaternion.Euler(l_EulerCam.x, l_EulerCam.y, l_EulerCam.z);
     }
     
     public bool IsInHorizontalRotation()
@@ -108,7 +108,6 @@ public class Portal : MonoBehaviour
         l_Forward.Normalize();
 
         float l_DotAngle = Vector3.Dot(l_Forward, Vector3.forward);
-        Debug.Log("Dot angle: " + l_DotAngle);
         return l_DotAngle < 0.01f && l_DotAngle > -0.01f;
     }
     public void PlacePortal(Vector3 _Position, Quaternion _Rotation, Vector3 _LocalScale, Collider _WallCollider)
@@ -117,7 +116,6 @@ public class Portal : MonoBehaviour
         transform.rotation = _Rotation;
         transform.localScale = _LocalScale;
         m_WallCollider = _WallCollider;
-        Debug.Log(this.name + " is Horizontal: " + IsInHorizontalRotation());
         SetIsPlaced(true);
     }
 

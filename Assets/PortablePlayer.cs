@@ -9,6 +9,7 @@ public class PortablePlayer : PortableObject
     public Action OnWarp;
     FPSController m_FPSController;
 
+    private Vector3 m_WarpEulerOffset = Vector3.zero;
 
 
     protected override void Awake()
@@ -26,58 +27,61 @@ public class PortablePlayer : PortableObject
         base.AfterWarp(_InTransform, _OutTransform);
         OnWarp?.Invoke();
 
-        Vector3 l_CurrentInPortalEuler = _InTransform.rotation.eulerAngles;
-        Vector3 l_CurrentOutPortalEuler = _OutTransform.rotation.eulerAngles;
+        SetWarpAngleOffset(_InTransform, _OutTransform);
 
-        ChangeYaw(_InTransform, _OutTransform);
+        ChangeYaw();
+        ChangePitch();
+    }
+    private void SetWarpAngleOffset(Transform _InTransform, Transform _OutTransform)
+    {
+        Vector3 l_InPortalEuler = _InTransform.rotation.eulerAngles;
+        Vector3 l_OuPortalEuler = _OutTransform.rotation.eulerAngles;
 
-        _InTransform.rotation = Quaternion.Euler(l_CurrentInPortalEuler);
-        _OutTransform.rotation = Quaternion.Euler(l_CurrentOutPortalEuler);
-
-        //Quaternion l_PortalsRelativeRot = Quaternion.FromToRotation(_InTransform.forward, _OutTransform.forward);
-
-        ////Adjust Yaw
-        //Vector3 l_YawForward = m_FPSController.YawController.forward;
-        //l_YawForward.Normalize();
-        ////Vector3 l_LocalYawForward = m_InPortal.m_OtherPortal.InverseTransformDirection(l_YawForward);
-        ////Vector3 l_WorldYawForward = m_OutPortal.transform.TransformDirection(l_LocalYawForward);
-
-        //l_YawForward = l_PortalsRelativeRot * l_YawForward;
-
-        //Quaternion l_TempQuat = Quaternion.LookRotation(l_YawForward);
-
-
-        //float l_Yaw = l_TempQuat.eulerAngles.y;
-        //m_FPSController.SetYaw(l_Yaw);
-
-        //////Adjust Pitch
-        ////Vector3 l_PitchForward = m_FPSController.PitchController.forward;
-        ////l_YawForward.Normalize();
-        ////Vector3 l_LocalPitchForward = m_InPortal.m_OtherPortal.InverseTransformDirection(l_PitchForward);
-        ////Vector3 l_WorldPitchForward = m_OutPortal.transform.TransformDirection(l_LocalPitchForward);
-
-        ////Quaternion l_Temp = Quaternion.LookRotation(l_WorldPitchForward);
-
-
-        //float l_Pitch = l_Temp.eulerAngles.x;
-
-        //Debug.Log(l_Pitch);
-
-        ////m_FPSController.SetPitch(l_Pitch);
+        m_WarpEulerOffset.x = l_OuPortalEuler.x - l_InPortalEuler.x;
+        m_WarpEulerOffset.y = l_OuPortalEuler.y - l_InPortalEuler.y;
+        m_WarpEulerOffset.z = l_OuPortalEuler.z - l_InPortalEuler.z;
     }
 
-    private void ChangeYaw(Transform _InTransform, Transform _OutTransform)
+    private void ChangeYaw2(Transform _InTransform, Transform _OutTransform)
     {
-        //We set X rot to 0 in both portals
-        _InTransform.rotation = Quaternion.Euler(new Vector3(0.0f, _InTransform.rotation.y, _InTransform.rotation.z));
-        _OutTransform.rotation = Quaternion.Euler(new Vector3(0.0f, _OutTransform.rotation.y, _OutTransform.rotation.z));
+        Vector3 l_InPortalForward = _InTransform.forward;
+        Vector3 l_OutPortalForward = _OutTransform.forward;
 
-        //We calculate the new Yaw
-        Vector3 l_YawForward = m_FPSController.YawController.forward;
-        Vector3 l_RelativeYaw = _InTransform.InverseTransformDirection(l_YawForward);
-        l_RelativeYaw = m_HalfTurn * l_RelativeYaw;
-        l_YawForward = _OutTransform.TransformDirection(l_RelativeYaw);
-        float l_Yaw = Mathf.Atan2(l_YawForward.x, l_YawForward.z) * Mathf.Rad2Deg;
+        Quaternion l_Rot = Quaternion.FromToRotation(l_OutPortalForward, l_InPortalForward);
+
+        Vector3 l_RotEuler = l_Rot.eulerAngles;
+
+        Debug.Log("X rot: " + l_RotEuler.x);
+        Debug.Log("Y rot: " + l_RotEuler.y);
+        Debug.Log("Z rot: " + l_RotEuler.z);
+
+        //Quaternion l_YRotOffset = Quaternion.Euler(0.0f, l_YAngle, 0.0f);
+
+        //Vector3 l_YawForwardRotated = l_YRotOffset * m_FPSController.YawController.forward;
+
+        //float l_Yaw = Quaternion.LookRotation(l_YawForwardRotated).eulerAngles.y;
+
+        //m_FPSController.SetYaw(l_Yaw);
+
+
+        //float l_Yaw = Mathf.Atan2(l_YawForward.x, l_YawForward.z) * Mathf.Rad2Deg;
+        //m_FPSController.SetYaw(l_Yaw);
+
+    }
+
+
+    private void ChangeYaw()
+    {
+        float l_CurrentYaw = m_FPSController.YawController.eulerAngles.y;
+
+        float l_Yaw = l_CurrentYaw + m_WarpEulerOffset.y + 180.0f;
         m_FPSController.SetYaw(l_Yaw);
+    }
+    private void ChangePitch()
+    {
+        float l_CurrentPitch = m_FPSController.PitchController.eulerAngles.x;
+        float l_Pitch = l_CurrentPitch + m_WarpEulerOffset.x + 180.0f;
+        Debug.Log(l_Pitch);
+        m_FPSController.SetPitch(l_Pitch);
     }
 }

@@ -59,8 +59,10 @@ public class PortableObject : MonoBehaviour
         m_InPortal = _InPortal;
         m_OutPortal = _OutPortal;
         Physics.IgnoreCollision(m_Collider, _WallCollider, true);
-        Debug.Log("Ignored Collisions with " + _WallCollider.name);
         //++m_PortalCount;
+        //++m_PortalCount;
+        //++m_PortalCount;
+        //++m_PortalCount;          
     }
 
     public void  ExitPortal(Collider _WallCollider)
@@ -95,6 +97,9 @@ public class PortableObject : MonoBehaviour
         {
             Quaternion l_RelativeRot = Quaternion.Inverse(l_InTransform.rotation) * transform.rotation;
             l_RelativeRot = m_HalfTurn * l_RelativeRot;
+            transform.rotation = l_OutTransform.rotation * l_RelativeRot;
+            transform.rotation = l_OutTransform.rotation * l_RelativeRot;
+            transform.rotation = l_OutTransform.rotation * l_RelativeRot;
             transform.rotation = l_OutTransform.rotation * l_RelativeRot;
         }
 

@@ -19,14 +19,17 @@ public class FPSController : MonoBehaviour
     public Transform YawController => m_YawController;
     [SerializeField] Transform m_PitchController;
     public Transform PitchController => m_PitchController;
-    PortablePlayer m_PortablePlayer;
+    [SerializeField] Transform m_RollController;
+    public Transform RollController => m_RollController;
     Rigidbody m_Rigidbody;
     [SerializeField] Camera m_Camera;
     public Camera Camera => m_Camera;
+    PortablePlayer m_PortablePlayer;
 
     [Header("Aim")]
     [SerializeField] float m_YawSpeed;
     [SerializeField] float m_PitchSpeed;
+    [SerializeField] float m_RollRecoverySpeed;
     [Space]
     [SerializeField] float m_MaxPitch;
     [SerializeField] float m_MinPitch;
@@ -35,6 +38,7 @@ public class FPSController : MonoBehaviour
     [SerializeField] bool m_PitchInverted;
     float m_Yaw;
     float m_Pitch;
+    float m_Roll;
 
     [Header("Movement")]
     public LayerMask m_GroundLayer;
@@ -128,9 +132,11 @@ public class FPSController : MonoBehaviour
 
         m_Yaw += m_YawSpeed * l_HorizontalMovement * Time.deltaTime * l_YawInverted;
         m_Pitch += m_PitchSpeed * l_VerticalMovement * Time.deltaTime * l_PitchInverted;
+        m_Roll = Mathf.MoveTowards(m_Roll, 0.0f, m_RollRecoverySpeed * Time.deltaTime);
 
         SetYaw(m_Yaw);
         SetPitch(m_Pitch);
+        SetRoll(m_Roll);
     }
     public void SetYaw(float _Yaw)
     {
@@ -144,6 +150,12 @@ public class FPSController : MonoBehaviour
         m_Pitch = _Pitch;
         m_Pitch = Mathf.Clamp(m_Pitch, m_MinPitch, m_MaxPitch);
         m_PitchController.localRotation = Quaternion.Euler(m_Pitch, 0.0f, 0.0f);
+    }
+
+    public void SetRoll(float _Roll)
+    {
+        
+        m_RollController.localRotation = Quaternion.Euler(0.0f, 0.0f, _Roll);
     }
 
 
