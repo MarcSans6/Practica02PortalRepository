@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class PortalGun: MonoBehaviour
 {
@@ -14,19 +15,11 @@ public class PortalGun: MonoBehaviour
     public Portal m_OrangePortal;
     public float m_MaxDistanceToShoot;
     public LayerMask m_ShootableSurface;
+    public float m_ScalingSpeed;
+    float m_DesiredScale = 1.0f;
 
     [Header("Attach Objects")]
-    public Transform                            
-       
-        
-                                                                            
-        
-        
-        
-        
-        
-        
-                                            m_AttachingPosition;
+    public Transform m_AttachingPosition;
     public float m_AttachingSpeed = 2.0f;
     public LayerMask m_AttachObjectLayerMask;
     public float m_MaxDistanceToAttach = 5;
@@ -54,7 +47,6 @@ public class PortalGun: MonoBehaviour
 #endif
         HandleShootPortals();
         HandleAttachObjects();
-
     }
 
     private void HandleShootPortals()
@@ -68,10 +60,16 @@ public class PortalGun: MonoBehaviour
         }
 
         if (Input.GetKey(m_ShootOrangePortalKeyCode))
+        {
+            HandleScaleChange();
             TryPlacePreview(m_OrangePreview);
+        }
 
         else if (Input.GetKey(m_ShootBluePortalKeyCode))
+        {
+            HandleScaleChange();
             TryPlacePreview(m_BluePreview);
+        }
 
         if (Input.GetKeyUp(m_ShootOrangePortalKeyCode) && m_OrangePreview.IsValid)
             m_OrangePortal.PlacePortal(m_OrangePreview.transform.position,
@@ -80,6 +78,16 @@ public class PortalGun: MonoBehaviour
         else if (Input.GetKeyUp(m_ShootBluePortalKeyCode) && m_BluePreview.IsValid)
             m_BluePortal.PlacePortal(m_BluePreview.transform.position,
                 m_BluePreview.transform.rotation, m_BluePreview.transform.localScale, m_BluePreview.WallCollider);
+    }
+
+    private void HandleScaleChange()
+    {
+        float l_ScrollingInput = Input.GetAxis("Mouse ScrollWheel");
+        m_DesiredScale += l_ScrollingInput * m_ScalingSpeed *Time.deltaTime;
+        m_DesiredScale = Mathf.Clamp(m_DesiredScale, 0.5f, 2);
+        Vector3 l_Scale = new Vector3(m_DesiredScale, m_DesiredScale, 1f);
+        m_OrangePreview.transform.localScale = l_Scale;
+        m_BluePreview.transform.localScale = l_Scale;
     }
 
     private void TryPlacePreview(PortalPreview _Preview)

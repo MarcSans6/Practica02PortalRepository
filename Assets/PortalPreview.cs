@@ -41,8 +41,9 @@ public class PortalPreview : MonoBehaviour
             //We check if the mirror portal is close to this valid point, just if both portals are facing the same direction
             if (m_Portal.m_MirrorPortal.isActiveAndEnabled && m_Portal.m_MirrorPortal.transform.forward == transform.forward)
             {
+                float l_MinDistance = m_MinDistanceToMirrorPortal * transform.localScale.x;
                 float l_DistanceToMirrorPortal = Vector3.Distance(m_ValidPoints[i].position, m_Portal.m_MirrorPortal.transform.position);
-                if (l_DistanceToMirrorPortal < m_MinDistanceToMirrorPortal)
+                if (l_DistanceToMirrorPortal < l_MinDistance)
                 {
                     m_IsValid = false;
                 }

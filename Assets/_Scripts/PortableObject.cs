@@ -88,16 +88,19 @@ public class PortableObject : MonoBehaviour
             Quaternion l_RelativeRot = Quaternion.Inverse(l_InTransform.rotation) * transform.rotation;
             l_RelativeRot = m_HalfTurn * l_RelativeRot;
             transform.rotation = l_OutTransform.rotation * l_RelativeRot;
-            transform.rotation = l_OutTransform.rotation * l_RelativeRot;
-            transform.rotation = l_OutTransform.rotation * l_RelativeRot;
-            transform.rotation = l_OutTransform.rotation * l_RelativeRot;
         }
 
-        //Update velocity of rigidbody
+        //Update scale
+        Vector3 l_Scale = transform.localScale;
+        l_Scale *= l_OutTransform.localScale.x;
+        transform.localScale = l_Scale;
+        m_Rigidbody.velocity = (m_Rigidbody.velocity.normalized) * m_Rigidbody.velocity.magnitude * transform.localScale.x;
 
+        //Update velocity of rigidbody
         Vector3 l_RelativeVel = l_InTransform.InverseTransformDirection(m_Rigidbody.velocity);
         l_RelativeVel = m_HalfTurn * l_RelativeVel;
         m_Rigidbody.velocity = l_OutTransform.TransformDirection(l_RelativeVel);
+
 
 
         //Calls the AfterWarp, in case any subclass wants to use it.
