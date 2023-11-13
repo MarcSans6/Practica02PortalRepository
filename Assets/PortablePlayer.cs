@@ -28,6 +28,8 @@ public class PortablePlayer : PortableObject
         OnWarp?.Invoke();
 
         //FisrtMethod(_InTransform, _OutTransform);
+
+
     }
 
     private void FisrtMethod(Transform _InTransform, Transform _OutTransform)
