@@ -59,21 +59,11 @@ public class PortableObject : MonoBehaviour
         m_InPortal = _InPortal;
         m_OutPortal = _OutPortal;
         Physics.IgnoreCollision(m_Collider, _WallCollider, true);
-        //++m_PortalCount;
-        //++m_PortalCount;
-        //++m_PortalCount;
-        //++m_PortalCount;          
     }
 
     public void  ExitPortal(Collider _WallCollider)
     {
         Physics.IgnoreCollision(m_Collider, _WallCollider, false);
-        //--m_PortalCount;
-
-        //if (m_PortalCount == 0)
-        //{
-        //    //Deactivate clone object;
-        //}
     }
 
     public bool CanWarp()
@@ -109,6 +99,7 @@ public class PortableObject : MonoBehaviour
         l_RelativeVel = m_HalfTurn * l_RelativeVel;
         m_Rigidbody.velocity = l_OutTransform.TransformDirection(l_RelativeVel);
 
+
         //Calls the AfterWarp, in case any subclass wants to use it.
         AfterWarp(l_InTransform, l_OutTransform);
 
@@ -117,7 +108,6 @@ public class PortableObject : MonoBehaviour
         var l_Tmp = m_InPortal;
         m_InPortal = m_OutPortal;
         m_OutPortal = l_Tmp;
-        //Debug.Break();
     }
 
     public void SetCanWarp(bool v)
@@ -125,8 +115,5 @@ public class PortableObject : MonoBehaviour
         m_CanWarp = v;
     }
 
-    protected virtual void AfterWarp(Transform _InTransform, Transform _OutTransform)
-    {
-
-    }
+    protected virtual void AfterWarp(Transform _InTransform, Transform _OutTransform) { }
 }

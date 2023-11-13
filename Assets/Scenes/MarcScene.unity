@@ -802,7 +802,7 @@ MonoBehaviour:
   m_Camera: {fileID: 963194227}
   m_YawSpeed: 180
   m_PitchSpeed: 90
-  m_RollRecoverySpeed: 0
+  m_RollRecoverySpeed: 180
   m_MaxPitch: 89
   m_MinPitch: -89
   m_YawInverted: 0

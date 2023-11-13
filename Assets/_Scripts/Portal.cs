@@ -123,7 +123,6 @@ public class Portal : MonoBehaviour
     {
         m_IsPlaced = v;
         gameObject.SetActive(v);
-        Debug.Log(gameObject.name + " IS PLACED: " + v);
     }
 
     public void AddBanned(PortableObject portableObject)

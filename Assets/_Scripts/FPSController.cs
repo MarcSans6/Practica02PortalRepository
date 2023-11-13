@@ -154,8 +154,8 @@ public class FPSController : MonoBehaviour
 
     public void SetRoll(float _Roll)
     {
-        
-        m_RollController.localRotation = Quaternion.Euler(0.0f, 0.0f, _Roll);
+        m_Roll = _Roll;
+        m_RollController.localRotation = Quaternion.Euler(0.0f, 0.0f, m_Roll);
     }
 
 
