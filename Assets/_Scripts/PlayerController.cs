@@ -5,17 +5,21 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IRestartLevelElement
 {
     public Camera m_Camera;
+    [SerializeField]
+    GameObject m_GameOverScreen;
+    KeyCode m_RestartLevelKey = KeyCode.Return;
 
     public void RestartElement()
     {
-        CharacterController l_CharacterController = GetComponent<CharacterController>();
-        l_CharacterController.enabled = false;
         transform.position = GameController.GetGameController().m_PlayerSpawnPosition;
         transform.rotation = GameController.GetGameController().m_PlayerSpawnRotation;
-        l_CharacterController.enabled = true;
+
+        m_GameOverScreen.SetActive(false);
+
+
     }
 
     private void Awake()
@@ -25,6 +29,8 @@ public class PlayerController : MonoBehaviour
         {
             GameController.GetGameController().m_Player = this;
             DontDestroyOnLoad(gameObject);
+            GameController.GetGameController().AddRestartLevelElement(this);
+
         }
         else
         {
@@ -37,6 +43,12 @@ public class PlayerController : MonoBehaviour
         GameController.GetGameController().m_PlayerSpawnRotation = transform.rotation;
 
 
+    }
+
+    public void KillPlayer()
+    {
+        m_GameOverScreen.SetActive(true);
+        GameController.GetGameController().OnGameOver();
     }
 
 
