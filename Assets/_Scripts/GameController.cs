@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
     public Vector3 m_PlayerSpawnPosition;
     public Quaternion m_PlayerSpawnRotation;
     public PlayerController m_Player;
+    public List<IRestartLevelElement> m_IRestartElementList = new List<IRestartLevelElement>();
+    
 
     bool m_GameOver = false;
 
@@ -52,6 +54,18 @@ public class GameController : MonoBehaviour
             RestartLevel();
     }
 
+    public void AddRestartLevelElement(IRestartLevelElement _Element)
+    {
+        if (_Element == null || m_IRestartElementList.Contains(_Element)) return;
+        m_IRestartElementList.Add(_Element);
+    }
+
+    public void RemoveRestartElement(IRestartLevelElement _Element)
+    {
+        if (_Element == null || m_IRestartElementList.Contains(_Element)) return;
+        m_IRestartElementList.Remove(_Element);
+    }
+
     public void OnGameOver()
     {
         m_GameOver = true;
@@ -61,6 +75,11 @@ public class GameController : MonoBehaviour
     public void RestartLevel()
     {
         DestroyObjects();
+        foreach (IRestartLevelElement element in m_IRestartElementList)
+        {
+            element?.RestartElement();
+        }
+
     }   
     #endregion
 }

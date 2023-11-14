@@ -23,6 +23,12 @@ public class Turret : MonoBehaviour
             {
                 l_RefractionCube.Reflect();
             }
+
+            if (l_RaycastHit.transform == GameController.GetGameController().m_Player.transform)
+            {
+                GameController.GetGameController().m_Player.KillPlayer();
+            }
+
         }
         m_LineRenderer.SetPosition(1, new Vector3(.0f, .0f, l_MaxDistance));
         float l_DotAngle = Vector3.Dot(transform.up, Vector3.up);
