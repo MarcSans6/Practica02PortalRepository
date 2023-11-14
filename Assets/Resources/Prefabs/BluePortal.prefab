@@ -948,6 +948,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RedLaserPrefab: {fileID: 2092021101696008119, guid: 2bf66c759995cd54c86ab7c2bb1fa505, type: 3}
+  m_PortalPosOffset: -0.2
 --- !u!1 &5911010987409008461
 GameObject:
   m_ObjectHideFlags: 0
@@ -1357,7 +1358,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4270359022164177000
 Transform:
   m_ObjectHideFlags: 0
