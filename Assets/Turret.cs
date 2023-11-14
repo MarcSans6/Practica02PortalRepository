@@ -1,32 +1,46 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
 
-public class Turret : MonoBehaviour
+public class Turret : MonoBehaviour, IGetLasered
 {
     public float m_DotAlife = .95f;
-    public LineRenderer m_LineRenderer;
-    public float m_MaxLaserDistance;
-    public LayerMask m_LayerLayerMask;
+    public RedLaser m_RedLaser;
+    bool m_Alife = true;
 
+    static int m_IDCount = 0;
+
+    private int m_ID;
+
+    private void Awake()
+    {
+        m_ID = ++m_IDCount;
+    }
+
+    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos, int _ID)
+    {
+        Kill();
+    }
+
+    private void Kill()
+    {
+        m_Alife = false;
+    }
+        
     private void Update()
     {
-        Ray l_Ray = new(m_LineRenderer.transform.position, m_LineRenderer.transform.forward);
-        float l_MaxDistance = m_MaxLaserDistance;
-        RaycastHit l_RaycastHit;
-        if (Physics.Raycast(l_Ray, out l_RaycastHit, m_MaxLaserDistance, m_LayerLayerMask.value))
+        float l_DotAngle = Vector3.Dot(transform.up, Vector3.up);
+
+        if (m_Alife)
         {
-            l_MaxDistance = Vector3.Distance(m_LineRenderer.transform.position, l_RaycastHit.point);
-            var l_RefractionCube = l_RaycastHit.transform.GetComponent<RefractionCube>();
-            if (l_RefractionCube != null)
+            if (l_DotAngle < m_DotAlife)
             {
-                l_RefractionCube.Reflect();
+                Kill();
             }
         }
-        m_LineRenderer.SetPosition(1, new Vector3(.0f, .0f, l_MaxDistance));
-        float l_DotAngle = Vector3.Dot(transform.up, Vector3.up);
-        bool l_Alife = l_DotAngle >= m_DotAlife;
-        m_LineRenderer.gameObject.SetActive(l_Alife);
+        if (m_Alife)
+            m_RedLaser.ShootLaser(m_ID);
     }
 }

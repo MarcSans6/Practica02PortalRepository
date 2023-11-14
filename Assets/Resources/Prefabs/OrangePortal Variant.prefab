@@ -80,14 +80,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5436134496360163667, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5436134496360163667, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5436134496360163667, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 180
       objectReference: {fileID: 0}
@@ -105,7 +97,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 4833ae6637c6571408f1d35099a023c2, type: 2}
     - target: {fileID: 9029759822332269224, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_Name
-      value: OrangePortal
+      value: OrangePortal Variant
       objectReference: {fileID: 0}
     - target: {fileID: 9029759822332269224, guid: 59bb75cd4a574e0489cefd8f95eb90a6, type: 3}
       propertyPath: m_IsActive

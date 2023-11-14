@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
 
-public class RefractionCube : MonoBehaviour
+public class RefractionCube : MonoBehaviour, IGetLasered
 {
-    public LineRenderer m_LineRenderer;
-    public float m_MaxLaserDistance;
+    [Header("References")]
+    public RedLaser m_RedLaser;
+    [Space]
     bool m_Reflected = false;
-    public LayerMask m_LayerLayerMask;
-    private void Awake()
+
+    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos, int _ID)
     {
-        m_LineRenderer.gameObject.SetActive(false);
-    }
-    private void Update()
-    {
-        if (!m_Reflected)
-        {
-            m_LineRenderer.gameObject.SetActive(false);
-        }
+        Reflect(_ID);
     }
 
     public void LateUpdate()
@@ -26,7 +20,9 @@ public class RefractionCube : MonoBehaviour
         m_Reflected = false;
     }
 
-    public void Reflect()
+
+
+    public void Reflect(int _LaserID)
     {
         if (m_Reflected)
         {
@@ -34,21 +30,7 @@ public class RefractionCube : MonoBehaviour
         }
 
         m_Reflected = true;
-        Ray l_Ray = new Ray(m_LineRenderer.transform.position, m_LineRenderer.transform.forward);
-        float l_MaxDistance = m_MaxLaserDistance;
-        RaycastHit l_RaycastHit;
-        if (Physics.Raycast(l_Ray, out l_RaycastHit, m_MaxLaserDistance, m_LayerLayerMask.value))
-        {
-            l_MaxDistance = Vector3.Distance(m_LineRenderer.transform.position, l_RaycastHit.point);
-
-            var l_RefractionCube = l_RaycastHit.transform.GetComponent<RefractionCube>();
-            if (l_RefractionCube != null)
-            {
-                l_RefractionCube.Reflect();
-            }
-        }
-        m_LineRenderer.SetPosition(1, new Vector3(.0f, .0f, l_MaxDistance));
-        m_LineRenderer.gameObject.SetActive(true);
+        m_RedLaser.ShootLaser(_LaserID);
     }
 
 }

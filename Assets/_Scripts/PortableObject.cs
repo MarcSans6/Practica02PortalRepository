@@ -27,33 +27,7 @@ public class PortableObject : MonoBehaviour
         m_Rigidbody = GetComponent<Rigidbody>();
         m_Collider = GetComponent<Collider>();
 
-        //Portal.OnPlaced += OnPortalPlaced;
     }
-
-    //public void OnPortalPlaced(Portal _Portal)
-    //{
-    //    if (m_InPortal!= null || m_OutPortal != null)
-    //    {
-    //        if (_Portal == m_InPortal || _Portal == m_OutPortal)
-    //        {
-    //            m_CanWarp = false;
-    //            ExitPortal(_Portal.WallCollider);
-    //        }
-    //    }
-    //}
-
-    private void LateUpdate()
-    {
-        //if (m_InPortal == null || m_OutPortal == null)
-        //{
-        //    return;
-        //}
-
-        //UPDATE CLONE OBJECT, JA VEUREM....
-
-
-    }
-
     public void SetIsInPortal(Portal _InPortal, Portal _OutPortal, Collider _WallCollider)
     {
         m_InPortal = _InPortal;
@@ -92,7 +66,8 @@ public class PortableObject : MonoBehaviour
 
         //Update scale
         Vector3 l_Scale = transform.localScale;
-        l_Scale *= l_OutTransform.localScale.x;
+        float l_ScaleFraction = l_OutTransform.localScale.x / l_InTransform.localScale.x;
+        l_Scale *= l_ScaleFraction;
         transform.localScale = l_Scale;
         m_Rigidbody.velocity = (m_Rigidbody.velocity.normalized) * m_Rigidbody.velocity.magnitude * transform.localScale.x;
 

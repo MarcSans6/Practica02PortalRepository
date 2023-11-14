@@ -29,11 +29,11 @@ public class PortablePlayer : PortableObject
         OnWarp?.Invoke();
 
         //FisrtMethod(_InTransform, _OutTransform);
-        SecondMethod(_InTransform, _OutTransform);
+        SetRotationForward(_InTransform, _OutTransform);
 
     }
 
-    private void SecondMethod(Transform _InTransform, Transform _OutTransform)
+    private void SetRotationForward(Transform _InTransform, Transform _OutTransform)
     {
         Quaternion l_ForwardRotation = m_FPSController.RollController.rotation;
         Debug.Log(l_ForwardRotation.eulerAngles);
