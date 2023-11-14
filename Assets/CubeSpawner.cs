@@ -41,7 +41,7 @@ public class CubeSpawner : MonoBehaviour
     {
         if (other.transform == GameController.GetGameController().m_Player.transform)
         {
-            m_PlayerInSpawnZone = true;
+            m_PlayerInSpawnZone = false;
         }
     }
 

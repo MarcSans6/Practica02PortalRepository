@@ -19,9 +19,7 @@ public class PortalLaser : MonoBehaviour, IGetLasered
 
     private void Update()
     {
-        //m_LaserPoolElements.SetActiveAllElements(false);
         m_OutLasersList.Clear();
-
     }
 
     public void WarpLaser(RedLaser _InLaser, Vector3 _HitPos, int _ID)
@@ -34,32 +32,25 @@ public class PortalLaser : MonoBehaviour, IGetLasered
         l_RelativePos = l_HalfTurn * l_RelativePos;
         l_OutLaser.transform.position = m_Portal.m_MirrorPortal.transform.TransformPoint(l_RelativePos);
 
-        Quaternion l_RelativeRot = Quaternion.Inverse(m_Portal.transform.rotation) * _InLaser.transform.rotation;
+        Quaternion l_ForwardRot = _InLaser.transform.rotation;
+
+        //Quaternion l_RelativeRot = Quaternion.Inverse(m_Portal.transform.rotation) * l_ForwardRot;
+        //l_RelativeRot = l_HalfTurn * l_RelativeRot;
+        //l_OutLaser.transform.rotation = m_Portal.m_MirrorPortal.transform.rotation * l_RelativeRot;
+
+        Quaternion l_RelativeRot = Quaternion.Inverse(m_Portal.transform.rotation) * l_ForwardRot;
         l_RelativeRot = l_HalfTurn * l_RelativeRot;
-        l_OutLaser.transform.rotation = m_Portal.m_MirrorPortal.transform.rotation * l_RelativeRot;
+        Quaternion l_NewRot = m_Portal.m_MirrorPortal.transform.rotation * l_RelativeRot;
+
+        l_OutLaser.transform.rotation = l_NewRot;
 
         m_OutLasersList.Add(l_OutLaser);
         l_OutLaser.ShootLaser(_ID);
     }
 
-    private void CreateNewLaser(RedLaser _InLaser, Vector3 _HitPos)
-    {
-        Quaternion l_HalfTurn = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-
-        RedLaser l_OutLaser = Instantiate(_InLaser);
-
-        Vector3 l_RelativePos = m_Portal.transform.InverseTransformPoint(_HitPos);
-        l_RelativePos = l_HalfTurn * l_RelativePos;
-        l_OutLaser.transform.position = m_Portal.m_MirrorPortal.transform.TransformPoint(l_RelativePos);
-
-        Quaternion l_RelativeRot = Quaternion.Inverse(m_Portal.transform.rotation) * l_OutLaser.transform.rotation;
-        l_RelativeRot = l_HalfTurn * l_RelativeRot;
-        l_OutLaser.transform.rotation = m_Portal.m_MirrorPortal.transform.rotation * l_RelativeRot;
-    }
-
     public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos, int _ID)
     {
-        WarpLaser(_Laser, _HitPos, _ID);
+        //WarpLaser(_Laser, _HitPos, _ID);
     }
 
     private void LateUpdate()

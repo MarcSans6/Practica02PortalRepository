@@ -8,17 +8,14 @@ using UnityEngine;
 public class Portal : MonoBehaviour
 {
     [Header("References")]
-    public Transform m_CamerasTransform;
-    public Camera m_WallRenderingCamera;
-    public Camera m_ObjectsRenderingCamera;
+    public Camera m_Camera;
     FPSController m_FPSController;
     public Transform m_OtherPortal;
     public Portal m_MirrorPortal;
     public Renderer m_Renderer;
 
     [Space]
-    public float m_OffsetNearPlaneWalls = 0.1f;
-    public float m_OffsetNearPlaneObjects = 0.1f;
+    public float m_OffsetNearPlane = 0.1f;
 
     public Collider WallCollider => m_WallCollider;
     private Collider m_WallCollider;
@@ -87,23 +84,21 @@ public class Portal : MonoBehaviour
     private void UpdateMirrorPortalCamera()
     {
         Transform l_PlayerCameraTransform = m_FPSController.Camera.transform;
-        Transform l_MirrorCamerasTransform = m_MirrorPortal.m_CamerasTransform;
-        Camera l_MirrorWallCamera = m_MirrorPortal.m_WallRenderingCamera;
-        Camera l_MirrorObjectsCamera = m_MirrorPortal.m_ObjectsRenderingCamera;
+        Transform l_MirrorCameraTransform = m_MirrorPortal.m_Camera.transform;
+        Camera l_MirrorCamera = m_MirrorPortal.m_Camera;
 
         //PlayerCamera world position to local position from otherPortal;
         Vector3 l_localPosition = m_OtherPortal.InverseTransformPoint(l_PlayerCameraTransform.position);
         //Applies l_localPosition to the MirrorPortal, then transforms that position into WorldSpace;
         Vector3 l_WorldPosition = m_MirrorPortal.transform.TransformPoint(l_localPosition);
-        l_MirrorCamerasTransform.position = l_WorldPosition;
+        l_MirrorCameraTransform.position = l_WorldPosition;
 
         Vector3 l_localDirections = m_OtherPortal.InverseTransformDirection(l_PlayerCameraTransform.forward);
         Vector3 l_WorldDirection = m_MirrorPortal.transform.TransformDirection(l_localDirections);
-        l_MirrorCamerasTransform.forward = l_WorldDirection;
+        l_MirrorCameraTransform.forward = l_WorldDirection;
 
         float l_Distance = Vector3.Distance(l_WorldPosition, m_MirrorPortal.transform.position);
-        l_MirrorWallCamera.nearClipPlane = l_Distance + m_OffsetNearPlaneWalls;
-        l_MirrorObjectsCamera.nearClipPlane = l_Distance + m_OffsetNearPlaneObjects;
+        l_MirrorCamera.nearClipPlane = l_Distance + m_OffsetNearPlane;
 
         //Vector3 l_EulerCam = l_MirrorCamerasTransform.rotation.eulerAngles;
         //l_MirrorCamerasTransform.rotation = Quaternion.Euler(l_EulerCam.x, l_EulerCam.y, l_EulerCam.z);

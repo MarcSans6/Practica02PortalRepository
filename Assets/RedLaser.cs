@@ -8,6 +8,7 @@ public class RedLaser : MonoBehaviour
     public LayerMask m_HitLayerMask;
     LineRenderer m_LineRenderer;
     bool m_ShootingLaser = false;
+    public bool m_AutoShooting = false;
     public int ID => m_ID;
     int m_ID;
 
@@ -19,6 +20,11 @@ public class RedLaser : MonoBehaviour
 
     private void Update()
     {
+        if (m_AutoShooting)
+        {
+            ShootLaser(m_ID);
+        }
+
         if (!m_ShootingLaser)
         {
             gameObject.SetActive(false);

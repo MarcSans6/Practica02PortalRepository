@@ -36,7 +36,6 @@ public class PortablePlayer : PortableObject
     private void SetRotationForward(Transform _InTransform, Transform _OutTransform)
     {
         Quaternion l_ForwardRotation = m_FPSController.RollController.rotation;
-        Debug.Log(l_ForwardRotation.eulerAngles);
 
         Quaternion l_RelativeRot = Quaternion.Inverse(_InTransform.rotation) * l_ForwardRotation;
         l_RelativeRot = m_HalfTurn * l_RelativeRot;
@@ -44,7 +43,6 @@ public class PortablePlayer : PortableObject
 
         Vector3 l_NewEuler = l_NewRot.eulerAngles;
 
-        Debug.Log(l_NewEuler.x);
 
         float l_Yaw = l_NewEuler.y;
         float l_Pitch = l_NewEuler.x;
