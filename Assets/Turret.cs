@@ -39,12 +39,6 @@ public class Turret : MonoBehaviour, IGetLasered
             {
                 Kill();
             }
-
-            if (l_RaycastHit.transform == GameController.GetGameController().m_Player.transform)
-            {
-                GameController.GetGameController().m_Player.KillPlayer();
-            }
-
         }
         if (m_Alife)
             m_RedLaser.ShootLaser(m_ID);

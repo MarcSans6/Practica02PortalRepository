@@ -1,25 +1,21 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Runtime;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour, IRestartLevelElement
+[RequireComponent(typeof(FPSController))]
+public class PlayerController : MonoBehaviour, IRestartLevelElement, IGetLasered
 {
     public Camera m_Camera;
     [SerializeField]
     GameObject m_GameOverScreen;
-    KeyCode m_RestartLevelKey = KeyCode.Return;
+
+    FPSController m_FPSController;
 
     public void RestartElement()
     {
+        m_FPSController.enabled = true;
         transform.position = GameController.GetGameController().m_PlayerSpawnPosition;
         transform.rotation = GameController.GetGameController().m_PlayerSpawnRotation;
-
         m_GameOverScreen.SetActive(false);
-
-
     }
 
     private void Awake()
@@ -45,12 +41,21 @@ public class PlayerController : MonoBehaviour, IRestartLevelElement
 
     }
 
+    private void Start()
+    {
+        m_FPSController = GetComponent<FPSController>();
+    }
+
     public void KillPlayer()
     {
         m_GameOverScreen.SetActive(true);
         GameController.GetGameController().OnGameOver();
+        m_FPSController.enabled = false;
+
     }
 
-
-
+    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos, int _ID)
+    {
+        KillPlayer();
+    }
 }

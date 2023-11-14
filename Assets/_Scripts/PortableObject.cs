@@ -7,7 +7,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PortableObject : MonoBehaviour
 {
+    public bool m_LockPosition = false;
     public bool m_LockRotation = false;
+    public bool m_LockScale = false;
+    public bool m_LockVelocity = false;
 
     public Vector3 CenterPos => m_CenterPosition.position;
     [SerializeField] protected Transform m_CenterPosition;
@@ -51,10 +54,12 @@ public class PortableObject : MonoBehaviour
         var l_OutTransform = m_OutPortal.transform;
 
         //Update position
-        Vector3 l_RelativePos = l_InTransform.InverseTransformPoint(transform.position);
-        l_RelativePos = m_HalfTurn * l_RelativePos;
-        transform.position = l_OutTransform.TransformPoint(l_RelativePos);
-
+        if (!m_LockPosition)
+        {
+            Vector3 l_RelativePos = l_InTransform.InverseTransformPoint(transform.position);
+            l_RelativePos = m_HalfTurn * l_RelativePos;
+            transform.position = l_OutTransform.TransformPoint(l_RelativePos);
+        }
 
         //Update rotation
         if (!m_LockRotation)
@@ -65,22 +70,26 @@ public class PortableObject : MonoBehaviour
         }
 
         //Update scale
-        Vector3 l_Scale = transform.localScale;
-        float l_ScaleFraction = l_OutTransform.localScale.x / l_InTransform.localScale.x;
-        l_Scale *= l_ScaleFraction;
-        transform.localScale = l_Scale;
-        m_Rigidbody.velocity = (m_Rigidbody.velocity.normalized) * m_Rigidbody.velocity.magnitude * transform.localScale.x;
+        if (!m_LockScale)
+        {
+            Vector3 l_Scale = transform.localScale;
+            float l_ScaleFraction = l_OutTransform.localScale.x / l_InTransform.localScale.x;
+            l_Scale *= l_ScaleFraction;
+            transform.localScale = l_Scale;
+            m_Rigidbody.velocity = (m_Rigidbody.velocity.normalized) * m_Rigidbody.velocity.magnitude * transform.localScale.x;
+        }
 
         //Update velocity of rigidbody
-        Vector3 l_RelativeVel = l_InTransform.InverseTransformDirection(m_Rigidbody.velocity);
-        l_RelativeVel = m_HalfTurn * l_RelativeVel;
-        m_Rigidbody.velocity = l_OutTransform.TransformDirection(l_RelativeVel);
 
-
+        if (!m_LockVelocity)
+        {
+            Vector3 l_RelativeVel = l_InTransform.InverseTransformDirection(m_Rigidbody.velocity);
+            l_RelativeVel = m_HalfTurn * l_RelativeVel;
+            m_Rigidbody.velocity = l_OutTransform.TransformDirection(l_RelativeVel);
+        }
 
         //Calls the AfterWarp, in case any subclass wants to use it.
         AfterWarp(l_InTransform, l_OutTransform);
-
 
         //Swap portal references in case object doesn't exit the collider
         var l_Tmp = m_InPortal;
