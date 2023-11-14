@@ -6,6 +6,8 @@ public class AttachGun: MonoBehaviour
     [Header("References")]
     public Transform m_AttachPosition;
     public Camera m_RaycastCam;
+    private Collider m_PlayerCollider;
+
     [Header("Settings")]
     public float m_AttachForce;
     public float m_ShootForce;
@@ -17,7 +19,10 @@ public class AttachGun: MonoBehaviour
     public KeyCode m_AttachKeyCode = KeyCode.E;
     public KeyCode m_ShootKeyCode = KeyCode.Q;
 
-
+    private void Start()
+    {
+        m_PlayerCollider = GameController.GetGameController().m_Player.GetComponent<Collider>();
+    }
 
     private void Update()
     {
@@ -52,7 +57,7 @@ public class AttachGun: MonoBehaviour
             if (l_AttachableObj != null)
             {
                 m_AttachedObj = l_AttachableObj;
-                m_AttachedObj.Attach(m_AttachPosition, m_AttachForce);
+                m_AttachedObj.Attach(m_AttachPosition, m_AttachForce, m_PlayerCollider);
             }
         }
     }

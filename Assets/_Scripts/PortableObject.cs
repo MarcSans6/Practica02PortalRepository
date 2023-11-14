@@ -29,6 +29,10 @@ public class PortableObject : MonoBehaviour
     {
         m_Rigidbody = GetComponent<Rigidbody>();
         m_Collider = GetComponent<Collider>();
+        if (m_CenterPosition == null)
+        {
+            m_CenterPosition = transform;
+        }
 
     }
     public void SetIsInPortal(Portal _InPortal, Portal _OutPortal, Collider _WallCollider)
