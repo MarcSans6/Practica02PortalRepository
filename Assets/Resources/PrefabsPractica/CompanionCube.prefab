@@ -300,6 +300,7 @@ GameObject:
   - component: {fileID: 3892218346873440584}
   - component: {fileID: 1683927247131463559}
   - component: {fileID: 1307041817}
+  - component: {fileID: 7568078503785680849}
   m_Layer: 8
   m_Name: CompanionCube
   m_TagString: Untagged
@@ -385,6 +386,18 @@ MonoBehaviour:
   m_MinDistanceToTarget: 0.1
   m_AttachLookingForward: 1
   m_RotationSpeed: 360
+--- !u!114 &7568078503785680849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3892218346873440587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bff6a2ab413ccb241b2815a3aef93eaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3892509327073003928
 GameObject:
   m_ObjectHideFlags: 0
