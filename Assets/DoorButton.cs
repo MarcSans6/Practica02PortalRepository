@@ -10,15 +10,16 @@ public class DoorButton : MonoBehaviour
     AnimationClip m_DoorOpenedAnim;
     [SerializeField]
     Animation m_AnimationComp;
+    public float m_OpeningSpeed;
     private void OnTriggerEnter(Collider other)
     {
         if(other.GetComponent<CompanionCube>() != null)
-        m_AnimationComp.CrossFade(m_DoorOpenedAnim.name, 1.0f);
+        m_AnimationComp.CrossFade(m_DoorOpenedAnim.name, m_OpeningSpeed);
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.GetComponent<CompanionCube>() != null)
-            m_AnimationComp.CrossFade(m_DoorClosedAnim.name, 1.0f);
+            m_AnimationComp.CrossFade(m_DoorClosedAnim.name, m_OpeningSpeed );
     }
 }
