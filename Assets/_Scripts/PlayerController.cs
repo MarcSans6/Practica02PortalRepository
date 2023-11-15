@@ -7,15 +7,16 @@ public class PlayerController : MonoBehaviour, IRestartLevelElement, IGetLasered
     public Camera m_Camera;
     [SerializeField]
     GameObject m_GameOverScreen;
+    public GameObject m_WinScreen;
 
     FPSController m_FPSController;
 
     public void RestartElement()
     {
         m_FPSController.enabled = true;
-        transform.position = GameController.GetGameController().m_PlayerSpawnPosition;
-        transform.rotation = GameController.GetGameController().m_PlayerSpawnRotation;
+        transform.position = GameController.GetGameController().m_CurrentPlayerSpawnPosition;
         m_GameOverScreen.SetActive(false);
+        m_WinScreen.SetActive(false);
     }
 
     private void Awake()
@@ -31,13 +32,10 @@ public class PlayerController : MonoBehaviour, IRestartLevelElement, IGetLasered
         else
         {
             GameObject.Destroy(gameObject);
-            GameController.GetGameController().m_Player.transform.position = transform.position;
-            GameController.GetGameController().m_Player.transform.rotation = transform.rotation;
         }
 
-        GameController.GetGameController().m_PlayerSpawnPosition = transform.position;
-        GameController.GetGameController().m_PlayerSpawnRotation = transform.rotation;
-
+        GameController.GetGameController().m_PlayerStartSpawnPosition = transform.position;
+        GameController.GetGameController().m_CurrentPlayerSpawnPosition = transform.position;
 
     }
 
@@ -52,6 +50,12 @@ public class PlayerController : MonoBehaviour, IRestartLevelElement, IGetLasered
         GameController.GetGameController().OnGameOver();
         m_FPSController.enabled = false;
 
+    }
+
+    public void PlayerWins()
+    {
+        m_WinScreen.SetActive(true);
+        GameController.GetGameController().OnWinGame();
     }
 
     public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos)

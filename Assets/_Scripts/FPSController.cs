@@ -206,6 +206,7 @@ public class FPSController : MonoBehaviour, ISlide
         ///    
     }
 
+
     private float GetCurrentHorizontalSpeed()
     {
         return  new Vector3(m_Rigidbody.velocity.x, .0f, m_Rigidbody.velocity.z).magnitude;
@@ -299,7 +300,7 @@ public class FPSController : MonoBehaviour, ISlide
     private bool OnGround()
     {
         Ray l_Ray = new Ray(transform.position, Vector3.down);
-        float l_Distance = (m_Collider.height / 2) + 0.01f;
+        float l_Distance = (m_Collider.height / 2) + 0.1f;
         if (Physics.Raycast(l_Ray, l_Distance, m_GroundLayer.value))
         {
             m_IsMidAirAfterWarp = false;
@@ -336,6 +337,7 @@ public class FPSController : MonoBehaviour, ISlide
 
     public void OnExitSlider()
     {
+        Debug.Log("OnExitSlider");
         m_IsSliding = false;
         m_CurrentDrag = m_HorizontalDrag;
     }

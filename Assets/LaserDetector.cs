@@ -15,7 +15,6 @@ public class LaserDetector : MonoBehaviour, IGetLasered
     public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos)
     {
         Activate();
-        Debug.Log("Lasered");
     }
 
     private void Update()

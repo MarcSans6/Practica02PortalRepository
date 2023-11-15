@@ -49,7 +49,10 @@ public class CubeSpawner : MonoBehaviour
     {
         if (m_InstanceCube != null)
         {
+            IRestartLevelElement l_CubeRestart = m_InstanceCube.GetComponent<IRestartLevelElement>();
+            GameController.GetGameController().RemoveRestartElement(l_CubeRestart);
             Destroy(m_InstanceCube);
+            m_InstanceCube = null;
         }
         m_InstanceCube = Instantiate(m_SpawnCube);
         m_InstanceCube.transform.position = m_SpawnPoint.transform.position;

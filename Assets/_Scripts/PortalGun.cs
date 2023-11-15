@@ -28,7 +28,7 @@ public class PortalGun: MonoBehaviour, IRestartLevelElement
 
     [Header("Debug")]
     public KeyCode m_ToggleShootingActivated = KeyCode.P;
-    public bool m_ShootingActivated = false;
+    public bool m_ShootingActivated = true;
 
     private void Awake()
     {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,17 +8,14 @@ public class GameController : MonoBehaviour
 {
     static GameController m_GameController;
     public GameObject m_DestroyObjects;
-    public Vector3 m_PlayerSpawnPosition;
-    public Quaternion m_PlayerSpawnRotation;
+    public Vector3 m_PlayerStartSpawnPosition;
+    public Vector3 m_CurrentPlayerSpawnPosition;
     public PlayerController m_Player;
     public List<IRestartLevelElement> m_IRestartElementList = new List<IRestartLevelElement>();
-    
 
     bool m_GameOver = false;
+    bool m_WinGame = false;
 
-    private void Start()
-    {
-    }
     public static GameController GetGameController()
     {
         if (m_GameController == null)
@@ -52,6 +50,11 @@ public class GameController : MonoBehaviour
 #endif
         if (m_GameOver && Input.GetKeyDown(KeyCode.Return))
             RestartLevel();
+        if (m_WinGame && Input.GetKeyDown(KeyCode.Return))
+        {
+            m_CurrentPlayerSpawnPosition = m_PlayerStartSpawnPosition;
+            RestartLevel();
+        }
     }
 
     public void AddRestartLevelElement(IRestartLevelElement _Element)
@@ -80,6 +83,11 @@ public class GameController : MonoBehaviour
             element?.RestartElement();
         }
 
-    }   
+    }
+
+    internal void OnWinGame()
+    {
+        m_WinGame = true;
+    }
     #endregion
 }

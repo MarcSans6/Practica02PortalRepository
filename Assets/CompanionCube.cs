@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -35,12 +36,10 @@ public class CompanionCube : MonoBehaviour, IRestartLevelElement
 
     public void RestartElement()
     {
-        gameObject.SetActive(true);
         transform.position = m_StartPos;
         transform.rotation = m_StartRot;
         transform.localScale = m_StartScale;
         m_Rigidbody.velocity = m_StartVelocity;
         m_Rigidbody.angularVelocity = m_StartAngularVel;
-
     }
 }
