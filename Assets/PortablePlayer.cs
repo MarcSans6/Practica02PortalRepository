@@ -20,7 +20,6 @@ public class PortablePlayer : PortableObject
     {
         base.AfterWarp(_InTransform, _OutTransform);
         OnWarp?.Invoke();
-        Debug.Break();
         SetRotationForward(_InTransform, _OutTransform);
     }
     private void SetRotationForward(Transform _InTransform, Transform _OutTransform)

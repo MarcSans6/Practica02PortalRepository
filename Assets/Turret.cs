@@ -11,18 +11,12 @@ public class Turret : MonoBehaviour, IGetLasered
     bool m_Alife = true;
     AttachableObject m_AttachableObject;
 
-
-    static int m_IDCount = 0;
-
-    private int m_ID;
-
     private void Awake()
     {
-        m_ID = ++m_IDCount;
         m_AttachableObject = GetComponent<AttachableObject>();
     }
 
-    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos, int _ID)
+    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos)
     {
         Kill();
     }
@@ -44,6 +38,6 @@ public class Turret : MonoBehaviour, IGetLasered
             }
         }
         if (m_Alife)
-            m_RedLaser.ShootLaser(m_ID);
+            m_RedLaser.ShootLaser();
     }
 }

@@ -25,7 +25,7 @@ public class PortalLaser : MonoBehaviour, IGetLasered
         m_OutLasersList.Clear();
     }
 
-    public void WarpLaser(RedLaser _InLaser, Vector3 _HitPos, int _ID)
+    public void WarpLaser(RedLaser _InLaser, Vector3 _HitPos)
     {
         RedLaser l_OutLaser = m_LaserPoolElements.GetNextElement().GetComponent<RedLaser>();
         Quaternion l_HalfTurn = Quaternion.Euler(0.0f, 180.0f, 0.0f);
@@ -45,12 +45,12 @@ public class PortalLaser : MonoBehaviour, IGetLasered
         l_OutLaser.transform.position = l_NewPos - l_OutLaser.transform.forward * m_PortalPosOffset; 
 
         m_OutLasersList.Add(l_OutLaser);
-        l_OutLaser.ShootLaser(_ID);
+        l_OutLaser.ShootLaser();
     }
 
-    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos, int _ID)
+    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos)
     {
-        WarpLaser(_Laser, _HitPos, _ID);
+        WarpLaser(_Laser, _HitPos);
     }
 
     private void LateUpdate()

@@ -9,8 +9,6 @@ public class RedLaser : MonoBehaviour
     LineRenderer m_LineRenderer;
     bool m_ShootingLaser = false;
     public bool m_AutoShooting = false;
-    public int ID => m_ID;
-    int m_ID;
 
 
     private void Awake()
@@ -22,7 +20,7 @@ public class RedLaser : MonoBehaviour
     {
         if (m_AutoShooting)
         {
-            ShootLaser(m_ID);
+            ShootLaser();
         }
 
         if (!m_ShootingLaser)
@@ -31,14 +29,13 @@ public class RedLaser : MonoBehaviour
         }
     }
 
-    public void ShootLaser(int _ID)
+    public void ShootLaser()
     {
         if (m_ShootingLaser)
         {
             return;
         }
 
-        m_ID = _ID;
         m_ShootingLaser = true;
         Ray l_Ray = new Ray(m_LineRenderer.transform.position, m_LineRenderer.transform.forward);
         float l_MaxDistance = m_MaxDistance;
@@ -50,7 +47,7 @@ public class RedLaser : MonoBehaviour
             IGetLasered l_IGetLasered = l_RaycastHit.transform.GetComponent<IGetLasered>();
             if (l_IGetLasered != null)
             {
-                l_IGetLasered.HandleLaserHit(this, l_RaycastHit.point, m_ID);
+                l_IGetLasered.HandleLaserHit(this, l_RaycastHit.point);
             }
 
         }

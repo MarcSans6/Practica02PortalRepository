@@ -10,9 +10,9 @@ public class RefractionCube : MonoBehaviour, IGetLasered
     [Space]
     bool m_Reflected = false;
 
-    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos, int _ID)
+    public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos)
     {
-        Reflect(_ID);
+        Reflect();
     }
 
     public void LateUpdate()
@@ -22,7 +22,7 @@ public class RefractionCube : MonoBehaviour, IGetLasered
 
 
 
-    public void Reflect(int _LaserID)
+    public void Reflect()
     {
         if (m_Reflected)
         {
@@ -30,7 +30,7 @@ public class RefractionCube : MonoBehaviour, IGetLasered
         }
 
         m_Reflected = true;
-        m_RedLaser.ShootLaser(_LaserID);
+        m_RedLaser.ShootLaser();
     }
 
 }
