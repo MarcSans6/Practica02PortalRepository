@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class DoorButton : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    AnimationClip m_DoorClosedAnim;
+    [SerializeField]
+    AnimationClip m_DoorOpenedAnim;
+    [SerializeField]
+    Animation m_AnimationComp;
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if(other.GetComponent<CompanionCube>() != null)
+        m_AnimationComp.CrossFade(m_DoorOpenedAnim.name, 1.0f);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerExit(Collider other)
     {
-        
+        if (other.GetComponent<CompanionCube>() != null)
+            m_AnimationComp.CrossFade(m_DoorClosedAnim.name, 1.0f);
     }
 }
