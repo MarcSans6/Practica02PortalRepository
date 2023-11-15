@@ -88,6 +88,7 @@ public class GameController : MonoBehaviour
     internal void OnWinGame()
     {
         m_WinGame = true;
+        m_CurrentPlayerSpawnPosition = m_PlayerStartSpawnPosition;
     }
     #endregion
 }

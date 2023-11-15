@@ -11003,7 +11003,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_OnLasered:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1654828750761375197}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: PlayerWins
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_LaseredMaterial: {fileID: 2100000, guid: 797bf488c630d4c4da4076a24ec6a432, type: 2}
   m_UnlaseredMaterial: {fileID: 2100000, guid: 4f47b69c96e3e06438c10c907f7d4f98, type: 2}
   m_CenterMesh: {fileID: 59485244}
@@ -27762,6 +27774,17 @@ PrefabInstance:
       objectReference: {fileID: 1977280751}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bce3c079236eb2743b6fc111bafe2b13, type: 3}
+--- !u!114 &1654828750761375197 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1654828750147744159, guid: bce3c079236eb2743b6fc111bafe2b13, type: 3}
+  m_PrefabInstance: {fileID: 1654828750761375196}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77565c8bc5b5f8f41bd3a640f5b54dd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1934722274038469601
 PrefabInstance:
   m_ObjectHideFlags: 0

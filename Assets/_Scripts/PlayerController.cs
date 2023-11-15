@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour, IRestartLevelElement, IGetLasered
     {
         m_WinScreen.SetActive(true);
         GameController.GetGameController().OnWinGame();
+        m_FPSController.enabled = false;
     }
 
     public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos)
