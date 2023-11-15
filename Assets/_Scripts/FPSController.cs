@@ -6,7 +6,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PortablePlayer))]
 [RequireComponent(typeof(Rigidbody))]
-public class FPSController : MonoBehaviour
+public class FPSController : MonoBehaviour, ISlide
 {
     public bool CamRotating { get; private set; }
     public bool Moving { get; private set; }
@@ -46,12 +46,15 @@ public class FPSController : MonoBehaviour
     [SerializeField] float m_SprintSpeed;
     [Range(.0f, 1f)]
     [SerializeField] float m_HorizontalDrag;
+    float m_CurrentDrag;
+    bool m_IsSliding;
     [SerializeField] float m_JumpForce;
     [SerializeField] float m_CoyoteTime;
     float m_LastTimeOnGround;
     Vector3 m_LastHorizontalDirection;
     CapsuleCollider m_Collider;
     bool m_IsMidAirAfterWarp;
+
 
     [Header("Input")]
     [SerializeField] KeyCode m_UpKeyCode = KeyCode.W;
@@ -85,6 +88,7 @@ public class FPSController : MonoBehaviour
         m_PortablePlayer = GetComponent<PortablePlayer>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        m_CurrentDrag = m_HorizontalDrag;
     }
     void FixedUpdate()
     {
@@ -170,7 +174,7 @@ public class FPSController : MonoBehaviour
         Vector3 l_HorizontalInput = GetHorizontalInput();
 
         // If l_HorizontalInput is different from last frame, then the rb velocity is set to 0.
-        if (ChangedDirection(l_HorizontalInput)) 
+        if (ChangedDirection(l_HorizontalInput) && !m_IsSliding) 
         {
             ResetHorizontalVelocity();
         }
@@ -195,7 +199,7 @@ public class FPSController : MonoBehaviour
 
         // We just apply drag if the player input is 0. This way if the player is moving the drag isn't applied.
         if (l_HorizontalInput == Vector3.zero && !m_IsMidAirAfterWarp)
-            ApplyDrag(m_HorizontalDrag);
+            ApplyDrag(m_CurrentDrag);
         ///    
     }
 
@@ -314,5 +318,17 @@ public class FPSController : MonoBehaviour
         Gizmos.color = Color.yellow;
 
         Gizmos.DrawLine(m_PitchController.position, m_PitchController.position + m_PitchController.forward * 2);
+    }
+
+    public void OnEnterSlider()
+    {
+        m_IsSliding = true;
+        m_CurrentDrag = 0;
+    }
+
+    public void OnExitSlider()
+    {
+        m_IsSliding = false;
+        m_CurrentDrag = m_HorizontalDrag;
     }
 }
