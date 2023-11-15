@@ -4,7 +4,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 
-public class PortalGun: MonoBehaviour
+public class PortalGun: MonoBehaviour, IRestartLevelElement
 {
     [Header("References")]
     public Camera m_RayCastCamera;
@@ -33,6 +33,11 @@ public class PortalGun: MonoBehaviour
     private void Awake()
     {
         m_AttachGun = GetComponent<AttachGun>();
+    }
+
+    private void Start()
+    {
+        GameController.GetGameController().AddRestartLevelElement(this);
     }
 
     private void Update()
@@ -106,5 +111,10 @@ public class PortalGun: MonoBehaviour
             }
             
         }
+    }
+
+    public void RestartElement()
+    {
+        m_DesiredScale = 1.0f;
     }
 }

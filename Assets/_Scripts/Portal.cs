@@ -5,7 +5,7 @@ using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 
-public class Portal : MonoBehaviour
+public class Portal : MonoBehaviour, IRestartLevelElement
 {
     [Header("References")]
     public Camera m_Camera;
@@ -33,6 +33,7 @@ public class Portal : MonoBehaviour
     private void Start()
     {
         m_FPSController = GameController.GetGameController().m_Player.GetComponent<FPSController>();
+        GameController.GetGameController().AddRestartLevelElement(this);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -131,5 +132,11 @@ public class Portal : MonoBehaviour
     public void AddBanned(PortableObject portableObject)
     {
         m_BannedObjects.Add(portableObject);
+    }
+
+    public void RestartElement()
+    {
+        gameObject.SetActive(false);
+        m_IsPlaced = false;
     }
 }

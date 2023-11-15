@@ -5,12 +5,19 @@ using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
-public class PortableObject : MonoBehaviour
+public class PortableObject : MonoBehaviour, IRestartLevelElement
 {
     public bool m_LockPosition = false;
     public bool m_LockRotation = false;
     public bool m_LockScale = false;
     public bool m_LockVelocity = false;
+
+    bool m_StartLockPos;
+    bool m_StartLockRot;
+    bool m_StartLockScale;
+    bool m_StartLockVel;
+
+
 
     public Vector3 CenterPos => m_CenterPosition.position;
     [SerializeField] protected Transform m_CenterPosition;
@@ -23,8 +30,11 @@ public class PortableObject : MonoBehaviour
     protected Rigidbody m_Rigidbody;
     private Collider m_Collider;
     private bool m_CanWarp = true;
+    bool m_StartCanWarp;
 
     protected static readonly Quaternion m_HalfTurn = Quaternion.Euler(.0f, 180.0f, .0f);
+
+
     protected virtual void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -34,6 +44,16 @@ public class PortableObject : MonoBehaviour
             m_CenterPosition = transform;
         }
 
+        m_StartLockPos = m_LockPosition;
+        m_StartLockRot = m_LockRotation;
+        m_StartLockScale = m_LockScale;
+        m_StartLockVel = m_LockVelocity;
+        m_StartCanWarp = m_CanWarp;
+
+    }
+    private void Start()
+    {
+        GameController.GetGameController().AddRestartLevelElement(this);
     }
     public void SetIsInPortal(Portal _InPortal, Portal _OutPortal, Collider _WallCollider)
     {
@@ -107,4 +127,13 @@ public class PortableObject : MonoBehaviour
     }
 
     protected virtual void AfterWarp(Transform _InTransform, Transform _OutTransform) { }
+
+    public void RestartElement()
+    {
+        m_LockPosition = m_StartLockPos;
+        m_LockRotation = m_StartLockRot;
+        m_LockScale = m_StartLockScale;
+        m_LockVelocity = m_StartLockVel;
+        m_CanWarp = m_StartCanWarp;
+    }
 }

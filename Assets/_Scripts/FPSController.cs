@@ -44,6 +44,7 @@ public class FPSController : MonoBehaviour, ISlide
     public LayerMask m_GroundLayer;
     [SerializeField] float m_WalkingSpeed;
     [SerializeField] float m_SprintSpeed;
+    [SerializeField] float m_UnstopableHorizontalSpeed;
     [Range(.0f, 1f)]
     [SerializeField] float m_HorizontalDrag;
     float m_CurrentDrag;
@@ -189,18 +190,25 @@ public class FPSController : MonoBehaviour, ISlide
         // We just add force this frame in 2 different situations:
         //  - if the player is grounded
         //  - if the player is mid air but makes an input.
-        //  - on both situations, the player can't be midair after a warp.
+        //  - on both situations, the player can't move if his horizontal speed is greater than
+        //      the considered Unstopabel H Speed. This way the player can't stop the momentum after a warp, for example
         // This way, if there is no input in air, the player follows the inertia.
-        if (OnGround() || l_HorizontalInput != Vector3.zero && !m_IsMidAirAfterWarp )
+        if (OnGround() || l_HorizontalInput != Vector3.zero && GetCurrentHorizontalSpeed() < m_UnstopableHorizontalSpeed)
         {
             m_Rigidbody.AddForce(l_Force * l_HorizontalInput);
         }
         ///
 
         // We just apply drag if the player input is 0. This way if the player is moving the drag isn't applied.
+        //  Also considers if the player is mid air after a warp
         if (l_HorizontalInput == Vector3.zero && !m_IsMidAirAfterWarp)
             ApplyDrag(m_CurrentDrag);
         ///    
+    }
+
+    private float GetCurrentHorizontalSpeed()
+    {
+        return  new Vector3(m_Rigidbody.velocity.x, .0f, m_Rigidbody.velocity.z).magnitude;
     }
 
     //Resets the horizontal velocity to 0.
@@ -233,7 +241,7 @@ public class FPSController : MonoBehaviour, ISlide
     // Returns a force that applied makes the rb horizontal velocity magnitude the speed we desire.
     private float GetHorizontalForceFromSpeed(float _DesiredSpeed)
     {
-        float l_HorizontalSpeed = new Vector3(m_Rigidbody.velocity.x, .0f, m_Rigidbody.velocity.z).magnitude;
+        float l_HorizontalSpeed = GetCurrentHorizontalSpeed();
         float l_TrueDesiredSpeed = l_HorizontalSpeed > _DesiredSpeed ? 0 : _DesiredSpeed - l_HorizontalSpeed;
         float l_Force = m_Rigidbody.mass * (l_TrueDesiredSpeed / Time.fixedDeltaTime);
         return l_Force;

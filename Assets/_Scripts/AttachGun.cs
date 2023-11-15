@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class AttachGun: MonoBehaviour
+public class AttachGun : MonoBehaviour, IRestartLevelElement
 {
     [Header("References")]
     public Transform m_AttachPosition;
@@ -65,5 +65,10 @@ public class AttachGun: MonoBehaviour
     public bool HasAttachedObject()
     {
         return m_AttachedObj != null;
+    }
+
+    public void RestartElement()
+    {
+        m_AttachedObj = null;
     }
 }

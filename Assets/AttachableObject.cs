@@ -6,7 +6,7 @@ using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Rigidbody))]
-public class AttachableObject : MonoBehaviour
+public class AttachableObject : MonoBehaviour, IRestartLevelElement
 {
     [Header("Attach")]
     public float m_AttachedDrag = 10;
@@ -15,6 +15,10 @@ public class AttachableObject : MonoBehaviour
     private float m_AttachForce;
     public bool m_AttachLookingForward = false;
     public float m_RotationSpeed;
+
+    bool m_PreviousLockPos;
+    bool m_PreviousLockRot;
+    bool m_PreviousLockVel;
 
     Rigidbody m_Rigidbody;
     Transform m_TargetTransform;
@@ -76,6 +80,9 @@ public class AttachableObject : MonoBehaviour
 
         if (m_PortableObject!= null)
         {
+            m_PreviousLockPos = m_PortableObject.m_LockPosition;
+            m_PreviousLockRot = m_PortableObject.m_LockRotation;
+            m_PreviousLockVel = m_PortableObject.m_LockVelocity;
             m_PortableObject.m_LockPosition = true;
             m_PortableObject.m_LockRotation= true;
             m_PortableObject.m_LockVelocity= true;
@@ -93,9 +100,9 @@ public class AttachableObject : MonoBehaviour
 
         if (m_PortableObject != null)
         {
-            m_PortableObject.m_LockPosition = false;
-            m_PortableObject.m_LockRotation = false;
-            m_PortableObject.m_LockVelocity = false;
+            m_PortableObject.m_LockPosition = m_PreviousLockPos;
+            m_PortableObject.m_LockRotation = m_PreviousLockRot;
+            m_PortableObject.m_LockVelocity = m_PreviousLockVel;
         }
 
         m_Rigidbody.velocity = _Force * _Dir.normalized;
@@ -104,5 +111,10 @@ public class AttachableObject : MonoBehaviour
     internal bool IsAttached()
     {
         return m_TargetTransform != null;
+    }
+
+    public void RestartElement()
+    {
+        Deattach(0.0f, Vector3.zero);
     }
 }
