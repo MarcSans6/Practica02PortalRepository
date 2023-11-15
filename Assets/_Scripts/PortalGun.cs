@@ -18,6 +18,8 @@ public class PortalGun: MonoBehaviour
     public float m_MaxDistanceToShoot;
     public LayerMask m_ShootableSurface;
     public float m_ScalingSpeed;
+    public float m_MinScale;
+    public float m_MaxScale;
     float m_DesiredScale = 1.0f;
 
     [Header("Input")]
@@ -82,7 +84,7 @@ public class PortalGun: MonoBehaviour
     {
         float l_ScrollingInput = Input.GetAxis("Mouse ScrollWheel");
         m_DesiredScale += l_ScrollingInput * m_ScalingSpeed *Time.deltaTime;
-        m_DesiredScale = Mathf.Clamp(m_DesiredScale, 0.5f, 2);
+        m_DesiredScale = Mathf.Clamp(m_DesiredScale, m_MinScale, m_MaxScale);
         Vector3 l_Scale = new Vector3(m_DesiredScale, m_DesiredScale, 1f);
         m_OrangePreview.transform.localScale = l_Scale;
         m_BluePreview.transform.localScale = l_Scale;

@@ -100,4 +100,9 @@ public class AttachableObject : MonoBehaviour
 
         m_Rigidbody.velocity = _Force * _Dir.normalized;
     }
+
+    internal bool IsAttached()
+    {
+        return m_TargetTransform != null;
+    }
 }

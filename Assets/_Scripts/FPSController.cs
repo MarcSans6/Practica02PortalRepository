@@ -185,23 +185,18 @@ public class FPSController : MonoBehaviour
         // We just add force this frame in 2 different situations:
         //  - if the player is grounded
         //  - if the player is mid air but makes an input.
+        //  - on both situations, the player can't be midair after a warp.
         // This way, if there is no input in air, the player follows the inertia.
-        if (OnGround() || l_HorizontalInput != Vector3.zero)
+        if (OnGround() || l_HorizontalInput != Vector3.zero && !m_IsMidAirAfterWarp )
         {
             m_Rigidbody.AddForce(l_Force * l_HorizontalInput);
         }
         ///
 
-
         // We just apply drag if the player input is 0. This way if the player is moving the drag isn't applied.
         if (l_HorizontalInput == Vector3.zero && !m_IsMidAirAfterWarp)
             ApplyDrag(m_HorizontalDrag);
         ///    
-        else if(l_HorizontalInput != Vector3.zero)
-        {
-            m_IsMidAirAfterWarp = false;
-        }
-
     }
 
     //Resets the horizontal velocity to 0.

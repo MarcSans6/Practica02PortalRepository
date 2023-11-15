@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SpawnPoint: {fileID: 524711190302070974}
-  m_SpawnCube: {fileID: 0}
+  m_SpawnCube: {fileID: 3892218346873440587, guid: 38a15647e2517944589c2f041670fb7b, type: 3}
 --- !u!1 &524711190302070975
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,7 +137,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 524711190302070975}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.43, z: 2.76}
+  m_LocalPosition: {x: 0, y: 2.85, z: 2.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -383,8 +383,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AttachedDrag: 10
   m_MinDistanceToTarget: 0.1
-  m_AttachLookingForward: 0
-  m_RotationSpeed: 300
+  m_AttachLookingForward: 1
+  m_RotationSpeed: 360
 --- !u!1 &3892509327073003928
 GameObject:
   m_ObjectHideFlags: 0
