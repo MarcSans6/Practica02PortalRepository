@@ -23,8 +23,8 @@ public class PortalCrosshair : MonoBehaviour
     private void CheckActivePortals()
     {
       
-        m_BlueCrosshair.SetActive(!m_BluePortal.IsPlaced);
-        m_OrangeCrosshair.SetActive(!m_OrangePortal.IsPlaced);
+        m_BlueCrosshair.SetActive(m_BluePortal.IsPlaced);
+        m_OrangeCrosshair.SetActive(m_OrangePortal.IsPlaced);
        
     }
 
