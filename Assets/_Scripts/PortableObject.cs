@@ -11,13 +11,13 @@ public class PortableObject : MonoBehaviour, IRestartLevelElement
     public bool m_LockRotation = false;
     public bool m_LockScale = false;
     public bool m_LockVelocity = false;
+    public GameObject m_ClonePrefab;
+    private GameObject m_Clone;
 
     bool m_StartLockPos;
     bool m_StartLockRot;
     bool m_StartLockScale;
     bool m_StartLockVel;
-
-
 
     public Vector3 CenterPos => m_CenterPosition.position;
     [SerializeField] protected Transform m_CenterPosition;
@@ -50,11 +50,50 @@ public class PortableObject : MonoBehaviour, IRestartLevelElement
         m_StartLockVel = m_LockVelocity;
         m_StartCanWarp = m_CanWarp;
 
+        //Create clone
+        if (m_ClonePrefab != null)
+            m_Clone = GameObject.Instantiate(m_ClonePrefab, new Vector3(-1000.0f, 1000.0f, -1000.0f), transform.rotation);
+        
+
     }
     private void Start()
     {
         GameController.GetGameController().AddRestartLevelElement(this);
     }
+
+    private void LateUpdate()
+    {
+        if (m_InPortal == null || m_OutPortal == null)
+        {
+            return;
+        }
+
+        if (m_Clone.activeSelf && m_InPortal.IsPlaced && m_OutPortal.IsPlaced)
+        {
+            var l_InTransform = m_InPortal.transform;
+            var l_OutTransform= m_OutPortal.transform;
+
+            //Update position clone
+            if (true)
+            {
+                Vector3 l_RelativePos = l_InTransform.InverseTransformPoint(transform.position);
+                l_RelativePos = m_HalfTurn * l_RelativePos;
+                m_Clone.transform.position = l_OutTransform.TransformPoint(l_RelativePos);
+            }
+
+            if (true)
+            {
+                Quaternion l_RelativeRot = Quaternion.Inverse(l_InTransform.rotation) * transform.rotation;
+                l_RelativeRot = m_HalfTurn * l_RelativeRot;
+                m_Clone.transform.rotation = l_OutTransform.rotation * l_RelativeRot;
+            }
+        }
+        else
+        {
+            m_Clone.transform.position = new Vector3(-1000.0f, 1000.0f, -1000.0f);
+        }
+    }
+
     public void SetIsInPortal(Portal _InPortal, Portal _OutPortal, Collider _WallCollider)
     {
         m_InPortal = _InPortal;
@@ -104,7 +143,6 @@ public class PortableObject : MonoBehaviour, IRestartLevelElement
         }
 
         //Update velocity of rigidbody
-
         if (!m_LockVelocity)
         {
             Vector3 l_RelativeVel = l_InTransform.InverseTransformDirection(m_Rigidbody.velocity);

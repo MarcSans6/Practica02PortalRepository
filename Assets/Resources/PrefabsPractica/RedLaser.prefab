@@ -148,3 +148,4 @@ MonoBehaviour:
   m_HitLayerMask:
     serializedVersion: 2
     m_Bits: 13120
+  m_AutoShooting: 0

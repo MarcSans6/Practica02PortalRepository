@@ -47,7 +47,7 @@ public class Turret : MonoBehaviour, IGetLasered, IRestartLevelElement
 
     public void HandleLaserHit(RedLaser _Laser, Vector3 _HitPos)
     {
-        Kill();
+        //Kill();
     }
 
     private void Kill()

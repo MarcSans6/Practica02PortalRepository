@@ -8,7 +8,6 @@ public class PortalLaser : MonoBehaviour, IGetLasered
 {
     public GameObject m_RedLaserPrefab;
     List<RedLaser> m_OutLasersList = new();
-    RedLaser m_OutLaser;
     Portal m_Portal;
     CPoolElements m_LaserPoolElements;
     public float m_PortalPosOffset;
@@ -17,7 +16,6 @@ public class PortalLaser : MonoBehaviour, IGetLasered
     {
         m_Portal = GetComponentInParent<Portal>();
         m_LaserPoolElements = new CPoolElements(m_RedLaserPrefab, 10, m_Portal.m_MirrorPortal.transform);
-        m_OutLaser = m_LaserPoolElements.GetNextElement().GetComponent<RedLaser>();
     }
 
     private void Update()

@@ -80,8 +80,36 @@ public class Portal : MonoBehaviour, IRestartLevelElement
                 }
             }
         }
+        //NewUpdateMirrorPortalCamera();
         UpdateMirrorPortalCamera();
     }
+    private void NewUpdateMirrorPortalCamera()
+    {
+        Transform l_InTransform = transform;
+        Transform l_OutTransform = m_MirrorPortal.transform;
+
+        Transform l_MirrorCamTransform = m_MirrorPortal.m_Camera.transform;
+        Transform l_PlayerCamTransform = m_FPSController.Camera.transform;
+
+        Vector3 l_RelativePos = l_InTransform.InverseTransformPoint(l_PlayerCamTransform.position);
+        l_RelativePos = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f)) * l_RelativePos;
+        l_MirrorCamTransform.position = l_OutTransform.TransformPoint(l_RelativePos);
+
+        Quaternion l_RelativeRot = Quaternion.Inverse(l_InTransform.rotation) * l_PlayerCamTransform.rotation;
+        l_RelativeRot = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f)) * l_RelativeRot;
+        l_MirrorCamTransform.rotation = l_OutTransform.rotation * l_RelativeRot;
+            
+        Plane l_Plane = new Plane(-l_OutTransform.forward, l_OutTransform.position);
+        Vector4 l_ClipPlaneWorldSpace = new Vector4(l_Plane.normal.x, l_Plane.normal.y, l_Plane.normal.z, l_Plane.distance);
+        Vector4 l_ClipPlaneCameraSpace = Matrix4x4.Transpose(Matrix4x4.Inverse(m_MirrorPortal.m_Camera.worldToCameraMatrix)) * l_ClipPlaneWorldSpace;
+
+        var l_NewMatrix = m_FPSController.Camera.CalculateObliqueMatrix(l_ClipPlaneCameraSpace);
+        m_MirrorPortal.m_Camera.projectionMatrix = l_NewMatrix;
+
+        float l_Distance = Vector3.Distance(l_MirrorCamTransform.position, m_MirrorPortal.transform.position);
+        m_MirrorPortal.m_Camera.nearClipPlane = l_Distance + m_OffsetNearPlane;
+    }
+
     private void UpdateMirrorPortalCamera()
     {
         Transform l_PlayerCameraTransform = m_FPSController.Camera.transform;
